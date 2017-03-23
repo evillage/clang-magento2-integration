@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+<!-- Customer Group Service-->
+    <route url="/V1/clang-clang/testapi" method="GET">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="getTestapi"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    <route url="/V1/clang-clang/testapi" method="POST">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="postTestapi"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    <route url="/V1/clang-clang/info" method="GET">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="getInfo"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    <route url="/V1/clang-clang/setup" method="POST">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="setup"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    <route url="/V1/clang-clang/check_setup" method="GET">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="check_setup"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    <route url="/V1/clang-clang/get_log" method="GET">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="get_log"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+    <route url="/V1/clang-clang/product_url_sku" method="GET">
+        <service class="Clang\Clang\Api\TestapiManagementInterface" method="getProductUrlBySku"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+</routes>

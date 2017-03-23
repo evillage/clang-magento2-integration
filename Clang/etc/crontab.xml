@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="clang">
+    	<job name="clang" instance="Clang\Clang\Cron\Clang" method="execute">
+    		<schedule>* * * * *</schedule>
+		</job>
+		<!-- default-job -->
+	</group>
+	<!-- cron-group -->
+</config>
