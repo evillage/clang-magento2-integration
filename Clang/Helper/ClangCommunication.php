@@ -48,10 +48,33 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
         return !empty($token);
     }
 
-    public function postNewOrder($storeId, $orderData){
+    protected $queuedData = [];
+
+    public function queueData($storeId, $endpoint, $data, $id = null){
+            $this->logger->info(__METHOD__);
         if($this->isStoreConnected($storeId)){
-            $this->logger->info('postNewOrder');
-            $this->clangApi->postNewOrder($storeId, $orderData);
+            if(is_null($id)){
+                $id = md5($storeId.$endpoint.json_encode($data));
+            }
+            $this->queuedData[$id] = [$storeId, $endpoint, $data];
+        }
+    }
+
+    public function postQueue(){
+            $this->logger->info(__METHOD__);
+        foreach($this->queuedData as $data){
+            $this->postData($data[0], $data[1], $data[2]);
+        }
+        $this->queuedData = [];
+    }
+
+    public function clearQueue($id = null){
+            $this->logger->info(__METHOD__);
+        if(is_null($id)){
+            $this->queuedData = [];
+        }
+        else{
+            unset($this->queuedData[$id]);
         }
     }
 

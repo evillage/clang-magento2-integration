@@ -5,7 +5,7 @@ namespace Clang\Clang\Observer;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
-class Event123 implements ObserverInterface {
+class OrderUpdate implements ObserverInterface {
     protected $logger;
     protected $clangCommunication;
     public function __construct(

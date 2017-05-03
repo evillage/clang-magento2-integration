@@ -9,7 +9,7 @@ use \Magento\Framework\App\Cache\Frontend\Pool;
 use \Magento\Framework\Api\SearchCriteriaBuilder;
 use \Magento\Store\Model\ScopeInterface;
 
-class TestapiManagement
+class ManagementApi
 {
 
 
@@ -24,6 +24,7 @@ class TestapiManagement
     protected $callLogRepository;
     protected $storeManager;
     protected $productRepository;
+    protected $mailSettingFactory;
     protected $logger;
     public function __construct(
         WriterInterface                                $configWriter,
@@ -37,6 +38,7 @@ class TestapiManagement
         CallLogRepository                              $callLogRepository,
         \Magento\Store\Model\StoreManagerInterface     $storeManager,
         \Magento\Catalog\Model\ProductRepository       $productRepository,
+        \Clang\Clang\Api\MailSettingInterfaceFactory      $mailSettingFactory,
 
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resource
@@ -53,6 +55,7 @@ class TestapiManagement
         $this->callLogRepository     = $callLogRepository;
         $this->storeManager          = $storeManager;
         $this->productRepository     = $productRepository;
+        $this->mailSettingFactory    = $mailSettingFactory;
 
         $this->logger = $logger;
         $this->logger->info(get_class($configReader));
@@ -173,18 +176,18 @@ class TestapiManagement
     /**
      * {@inheritdoc}
      */
-    public function getTestapi($param)
-    {
-        $param = $this->configReader->getValue('clang/clang/testsetting', ScopeConfigInterface::SCOPE_TYPE_DEFAULT, 0);
+    public function disableMails($mailSettings){
+        $mailNames = [];
+        foreach($mailSettings as $mailSetting){
 
-        return 'hello api GET return the $param ' . $param;
-    }
-    /**
-     * {@inheritdoc}
-     */
-    public function postTestapi($param)
-    {
-        $this->configWriter->save('clang/clang/testsetting', 'HALLO SIMON: '.$param, ScopeConfigInterface::SCOPE_TYPE_DEFAULT, 0);
+            $storeId = $mailSetting->getStoreId();
+            $this->logger->info('disabled: '.$mailSetting->getDisabled());
+
+            $this->configWriter->save('clang/clang/disable_mail/'.$mailSetting->getMailName(), $mailSetting->getDisabled(), ScopeInterface::SCOPE_STORES, $storeId);
+
+            $mailNames[] = $mailSetting->getMailName();
+        }
+        $this->configWriter->save('clang/clang/disable_mailnames', implode(',',$mailNames));
 
         $types = array('config');
         foreach ($types as $type) {
@@ -194,6 +197,29 @@ class TestapiManagement
             $cacheFrontend->getBackend()->clean();
         }
 
-        return 'hello api POST return the $param ' . $param;
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function checkMails(){
+        $settings = [];
+        $mailNames = array_filter(explode(',',$this->configReader->getValue('clang/clang/disable_mailnames')));
+
+        foreach($this->storeManager->getStores() as $store){
+            $storeId = $store->getId();
+
+            foreach($mailNames as $type){
+                $mailSetting = $this->mailSettingFactory->create();
+                $mailSetting->setStoreId($storeId);
+                $mailSetting->setMailName($type);
+                $mailSetting->setDisabled($this->configReader->getValue('clang/clang/disable_mail/'.$type, ScopeInterface::SCOPE_STORES, $storeId));
+
+                $settings[] = $mailSetting;
+            }
+        }
+        return $settings;
+
     }
 }

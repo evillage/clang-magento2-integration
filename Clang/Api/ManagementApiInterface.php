@@ -3,17 +3,8 @@
 
 namespace Clang\Clang\Api;
 
-interface TestapiManagementInterface
+interface ManagementApiInterface
 {
-
-
-    /**
-     * GET for testapi api
-     * @param string $param
-     * @return string
-     */
-
-    public function getTestapi($param);
 
     /**
      * GET info about extension
@@ -32,20 +23,26 @@ interface TestapiManagementInterface
     public function getProductUrlBySku($sku, $storeId);
 
     /**
-     * POST for testapi api
-     * @param string $param
-     * @return string
-     */
-
-    public function postTestapi($param);
-
-    /**
      * Setup the extension
      * @param Clang\Clang\Api\SetupSettingsInterface[] $settings
      * @return boolean
      */
 
     public function setup($settings);
+
+    /**
+     * Enable / disable mails
+     * @param Clang\Clang\Api\MailSettingInterface[] $mailSettings
+     * @return boolean
+     */
+
+    public function disableMails($mailSettings);
+
+    /**
+     * Check enabled / disabled mails
+     * @return Clang\Clang\Api\MailSettingInterface[]
+     */
+    public function checkMails();
 
     /**
      * Check the setup

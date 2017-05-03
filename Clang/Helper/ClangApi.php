@@ -80,14 +80,9 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
-    public function postNewOrder($storeId, $data){
-        $logId = $this->logCall($storeId, 'new-order', '', $data);
-        return $this->post($storeId, 'new-order', '', $data, ['X-Reference'=>$logId]);
-    }
-
     public function postData($storeId, $endpoint, $data){
         $logId = $this->logCall($storeId, $endpoint, '', $data);
-        return $this->post($storeId, $endpoint, '', $data, ['X-Reference'=>$logId]);
+        return $this->post($storeId, $endpoint, '', $data, ['X-Reference'=>$logId, 'X-Identifier'=>'Magento Extension '.$this->getExtensionVersion()]);
     }
 
     protected function logCall($storeId, $endpoint, $path, $data){

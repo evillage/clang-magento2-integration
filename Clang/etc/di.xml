@@ -1,10 +1,11 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Clang\Clang\Api\TestapiManagementInterface" type="Clang\Clang\Model\TestapiManagement"/>
+    <preference for="Clang\Clang\Api\ManagementApiInterface" type="Clang\Clang\Model\ManagementApi"/>
 
     <preference for="Clang\Clang\Api\InfoResponseInterface" type="Clang\Clang\Model\InfoResponse"/>
     <preference for="Clang\Clang\Api\SetupSettingsInterface" type="Clang\Clang\Model\SetupSettings"/>
     <preference for="Clang\Clang\Api\EndPointInterface" type="Clang\Clang\Model\EndPoint"/>
+    <preference for="Clang\Clang\Api\MailSettingInterface" type="Clang\Clang\Model\MailSetting"/>
 
     <!--virtualType name="Magento\Framework\Mail\Template\TransportBuilder" type="Clang\Clang\Helper\TransportBuilder">
     </virtualType-->
@@ -14,5 +15,16 @@
     <type name="Magento\Customer\Model\AccountManagement"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
     <type name="Magento\Customer\Model\Customer"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
     <type name="Magento\Newsletter\Model\Subscriber"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+
+    <type name="Magento\Wishlist\Controller\Index\Send"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\Sitemap\Model\Observer"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\User\Model\User"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\ProductAlert\Model\Email"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\ProductAlert\Model\Observer"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\Directory\Model\Observer"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\Contact\Controller\Index"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+    <type name="Magento\SendFriend\Model\SendFriend"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
+
+    <preference for="Magento\Framework\Mail\Template\TransportBuilder" type="Clang\Clang\Helper\TransportBuilder" />
 
 </config>
