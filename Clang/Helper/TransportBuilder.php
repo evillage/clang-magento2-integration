@@ -31,7 +31,7 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         \Psr\Log\LoggerInterface $logger,
         ScopeConfigInterface $configReader
     ) {
-        parent::__construct($templateFactory, $message, $senderResolver, $objectManager, $mailTransportFactory, $logger);
+        parent::__construct($templateFactory, $message, $senderResolver, $objectManager, $mailTransportFactory);
 
         $this->configReader       = $configReader;
         $this->clangCommunication = $clangCommunication;
