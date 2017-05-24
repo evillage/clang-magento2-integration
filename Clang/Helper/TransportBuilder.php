@@ -49,10 +49,13 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
      */
     public function getTransport()
     {
-        $this->logger->info('TRANSPORTBUILDER: GETTRANSPORT');
-        $this->logger->info('TRANSPORTBUILDER: '.$this->templateIdentifier);
-        $this->logger->info('TRANSPORTBUILDER: '.implode(', ',array_keys($this->templateVars)));
-        $this->logger->info('TRANSPORTBUILDER: '.implode(', ',array_keys($this->templateOptions)));
+        $templateIdentifier = $this->templateIdentifier;
+        if(is_numeric($templateIdentifier) && $this->getTemplate()){
+            $tpl = $this->getTemplate()->load($templateIdentifier);
+            if(is_callable([$tpl, 'getTemplateCode'])){
+                $templateIdentifier = $tpl->getTemplateCode();
+            }
+        }
         $data = [];
         foreach($this->templateOptions as $key => $value){
             unset($objects);
@@ -74,7 +77,7 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         $this->logger->info('TRANSPORTBUILDER: STORE: '.$storeId);
 
         $endpoint = '';
-        switch($this->templateIdentifier){
+        switch($templateIdentifier){
             case 'sales_email_order_template':
             case 'sales_email_order_guest_template':{
                 $endpoint = 'order';
@@ -157,7 +160,7 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
                 break;
             }
             default: {
-                $endpoint = preg_replace('/_template$/', '', $this->templateIdentifier);
+                $endpoint = preg_replace('/_template$/', '', $templateIdentifier);
                 break;
             }
         }
