@@ -165,6 +165,8 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
             }
         }
 
+        $endpoint = preg_replace('/\s+/', '-', strtolower($endpoint));
+
         $this->clangCommunication->clearQueue();
         $this->clangCommunication->postData($storeId, $endpoint, $data);
 
