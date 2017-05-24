@@ -42,60 +42,6 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
 
     }
 
-
-/*
-    protected function enrichLinks($origObject){
-        $data = [];
-        $reflObj = new \ReflectionObject($origObject);
-        foreach($reflObj->getMethods(\ReflectionMethod::IS_PUBLIC) as $method){
-            try{
-                if(!$method->isStatic() && $method->getNumberOfParameters() == 0 && preg_match('/^get(\w*Link)$/', $method->name, $matches)){
-                    $varName = strtolower(preg_replace('/(.)([A-Z])/', '$1_$2', $matches[1]));
-                    $data[$varName] = $method->invoke($origObject);
-                }
-            }
-            catch(\Exception $e){
-                // Ignore
-            }
-        }
-        return $data;
-    }
-/*
-    protected function toArray($data, array &$objects){
-        if(is_array($data)){
-            foreach($data as &$value){
-                $value = $this->toArray($value, $objects);
-            }
-        }
-        elseif(is_object($data) && !isset($objects[spl_object_hash($data)])){
-            $objects[spl_object_hash($data)] = true;
-            $origObject = $data;
-            if($data instanceof \Magento\Framework\Model\AbstractModel && method_exists($data, 'getData')){
-                $data = $this->toArray($data->getData(), $objects);
-                $data = array_merge($this->enrichLinks($origObject), $data);
-            }
-            elseif($data instanceof \Magento\Framework\DataObject){
-                $data = $this->toArray($data->getData(), $objects);
-                $data = array_merge($this->enrichLinks($origObject), $data);
-            }
-            else{
-
-                $this->logger->info('UNKNOWN OBJECT: '.get_class($data));
-            }
-
-            /*
-            else{
-                $result = [];
-                foreach($data as $key => $value){
-                    $result[$key] = $this->toArray($value, $objects);
-                }
-                return $result;
-            }
-            * /
-        }
-        return $data;
-    }*/
-
     /**
      * Get mail transport
      *
@@ -168,6 +114,46 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
             case 'sales_email_shipment_comment_guest_template':
             {
                 $endpoint = 'shipment-commment';
+                break;
+            }
+            case 'newsletter_subscription_success_email_template': {
+                $endpoint = 'newsletter-subscribe';
+                break;
+            }
+            case 'customer_create_account_email_no_password_template': {
+                $endpoint = 'create-account-no-password';
+                break;
+            }
+            case 'customer_password_forgot_email_template': {
+                $endpoint = 'customer-password-forgot';
+                break;
+            }
+            case 'customer_create_account_email_template': {
+                $endpoint = 'customer-create-account';
+                break;
+            }
+            case 'customer_password_remind_email_template': {
+                $endpoint = 'customer-password-remind';
+                break;
+            }
+            case 'newsletter_subscription_un_email_template': {
+                $endpoint = 'newsletter-unsubscribe';
+                break;
+            }
+            case 'sendfriend_email_template': {
+                $endpoint = 'sendfriend';
+                break;
+            }
+            case 'update_customer_template': {
+                $endpoint = 'update-customer';
+                break;
+            }
+            case 'wishlist_email_email_template': {
+                $endpoint = 'wishlist';
+                break;
+            }
+            case 'customer_account_information_change_email_template': {
+                $endpoint = 'customer-change-email';
                 break;
             }
             default: {
