@@ -7,6 +7,12 @@
             <resource ref="self"/>
         </resources>
     </route>
+    <route url="/V1/clang-clang/ping" method="GET">
+        <service class="Clang\Clang\Api\ManagementApiInterface" method="ping"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
     <route url="/V1/clang-clang/setup" method="POST">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="setup"/>
         <resources>

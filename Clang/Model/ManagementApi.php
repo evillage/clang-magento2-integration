@@ -86,6 +86,14 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
+    public function ping()
+    {
+        return json_encode($this->clangApi->pingClang());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setup($settings)
     {
         foreach($settings as $storeSettings){

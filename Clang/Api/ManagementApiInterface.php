@@ -7,6 +7,13 @@ interface ManagementApiInterface
 {
 
     /**
+     * Ping clang
+     * @return string
+     */
+
+    public function ping();
+
+    /**
      * GET info about extension
      * @return Clang\Clang\Api\InfoResponseInterface
      */

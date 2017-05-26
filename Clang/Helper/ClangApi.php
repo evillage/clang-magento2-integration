@@ -80,6 +80,14 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
+    public function pingClang(){
+        $responses = [];
+        foreach($this->getConnectedStoreIds() as $storeId){
+            $responses[] = $this->post($storeId, 'ping', '', ['ping'=>'pong']);
+        }
+        return $responses;
+    }
+
     public function postData($storeId, $endpoint, $data){
         $logId = $this->logCall($storeId, $endpoint, '', $data);
         return $this->post($storeId, $endpoint, '', $data, ['X-Reference'=>$logId, 'X-Identifier'=>'Magento Extension '.$this->getExtensionVersion()]);
