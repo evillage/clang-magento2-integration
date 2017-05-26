@@ -24,6 +24,7 @@ class ManagementApi
     protected $callLogRepository;
     protected $storeManager;
     protected $productRepository;
+    protected $clangApi;
     protected $mailSettingFactory;
     protected $logger;
     public function __construct(
@@ -39,6 +40,7 @@ class ManagementApi
         \Magento\Store\Model\StoreManagerInterface     $storeManager,
         \Magento\Catalog\Model\ProductRepository       $productRepository,
         \Clang\Clang\Api\MailSettingInterfaceFactory      $mailSettingFactory,
+        \Clang\Clang\Helper\ClangApi $clangApi,
 
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resource
@@ -56,6 +58,7 @@ class ManagementApi
         $this->storeManager          = $storeManager;
         $this->productRepository     = $productRepository;
         $this->mailSettingFactory    = $mailSettingFactory;
+        $this->clangApi             = $clangApi;
 
         $this->logger = $logger;
         $this->logger->info(get_class($configReader));
@@ -75,8 +78,8 @@ class ManagementApi
     public function getInfo()
     {
         $info = $this->infoResponseFactory->create();
-        $info->setMessage('Hello, this is the Magento <> Clang integration, who are you? Please tell me by executing my setup-call!');
-        $info->setVersion('1.0.0');
+        $info->setMagentoVersion($this->clangApi->getMagentoVersion());
+        $info->setVersion($this->clangApi->getExtensionVersion());
         return $info;
     }
 

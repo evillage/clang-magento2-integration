@@ -5,7 +5,7 @@ namespace Clang\Clang\Model;
 class InfoResponse extends \Magento\Framework\Model\AbstractModel implements \Clang\Clang\Api\InfoResponseInterface
 {
     const KEY_VERSION = 'version';
-    const KEY_MESSAGE = 'message';
+    const KEY_MAGENTOVERSION = 'magento_version';
 
 
     public function __construct(
@@ -22,17 +22,17 @@ class InfoResponse extends \Magento\Framework\Model\AbstractModel implements \Cl
     /**
      * {@inheritdoc}
      */
-    public function getMessage()
+    public function getMagentoVersion()
     {
-        return $this->_getData(self::KEY_MESSAGE);
+        return $this->_getData(self::KEY_MAGENTOVERSION);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setMessage($message)
+    public function setMagentoVersion($message)
     {
-        return $this->setData(self::KEY_MESSAGE, $message);
+        return $this->setData(self::KEY_MAGENTOVERSION, $message);
     }
 
     /**

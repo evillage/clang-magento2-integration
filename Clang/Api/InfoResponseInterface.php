@@ -15,11 +15,11 @@ interface InfoResponseInterface
     public function getVersion();
 
     /**
-     * A welcome message from the extension
+     * Version number of magento
      * @return string
      */
 
-    public function getMessage();
+    public function getMagentoVersion();
 
     /**
      * Set the version number of the extension
@@ -30,11 +30,11 @@ interface InfoResponseInterface
     public function setVersion($version);
 
     /**
-     * Set the welcome message from the extension
+     * Set the version number of magento
      * @param string $message
      * @return string
      */
 
-    public function setMessage($message);
+    public function setMagentoVersion($version);
 
 }
