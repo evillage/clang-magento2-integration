@@ -27,6 +27,7 @@ class ManagementApi
     protected $clangApi;
     protected $mailSettingFactory;
     protected $logger;
+    protected $subscriber;
     public function __construct(
         WriterInterface                                $configWriter,
         ScopeConfigInterface                           $configReader,
@@ -41,6 +42,7 @@ class ManagementApi
         \Magento\Catalog\Model\ProductRepository       $productRepository,
         \Clang\Clang\Api\MailSettingInterfaceFactory      $mailSettingFactory,
         \Clang\Clang\Helper\ClangApi $clangApi,
+        \Magento\Newsletter\Model\Subscriber $subscriber,
 
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resource
@@ -58,7 +60,8 @@ class ManagementApi
         $this->storeManager          = $storeManager;
         $this->productRepository     = $productRepository;
         $this->mailSettingFactory    = $mailSettingFactory;
-        $this->clangApi             = $clangApi;
+        $this->clangApi              = $clangApi;
+        $this->subscriber            = $subscriber;
 
         $this->logger = $logger;
         $this->logger->info(get_class($configReader));
@@ -231,6 +234,27 @@ class ManagementApi
             }
         }
         return $settings;
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUnsubscribeUrl($emailaddress, $storeId){
+        $connection = $this->subscriber->getResource()->getConnection();
+
+        $select = $connection->select()->from($this->subscriber->getResource()->getMainTable())->where('subscriber_email=:subscriber_email and store_id=:store_id');
+
+        $result = $connection->fetchRow($select, [
+            'subscriber_email' => $emailaddress,
+            'store_id'         => $storeId
+        ]);
+
+        if (!$result) {
+            return '';
+        }
+
+        return $this->subscriber->addData($result)->getUnsubscriptionLink();
 
     }
 }

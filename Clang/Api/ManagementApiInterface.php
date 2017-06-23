@@ -46,6 +46,14 @@ interface ManagementApiInterface
     public function disableMails($mailSettings);
 
     /**
+     * Get unsubscribe url
+     * @param string $emailaddress
+     * @param integer $storeId
+     * @return string
+     */
+    public function getUnsubscribeUrl($emailaddress, $storeId);
+
+    /**
      * Check enabled / disabled mails
      * @return Clang\Clang\Api\MailSettingInterface[]
      */
