@@ -1,8 +1,5 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <!--event name="sales_order_place_after">
-        <observer name="event123" instance="Clang\Clang\Observer\Event123" shared="false" />
-    </event-->
     <event name="customer_save_after_data_object">
         <observer name="customer_update" instance="Clang\Clang\Observer\CustomerUpdate" shared="false" />
     </event>
@@ -12,14 +9,4 @@
     <event name="controller_action_postdispatch">
         <observer name="postdispatch" instance="Clang\Clang\Observer\PostDispatch" shared="false" />
     </event>
-    <!--event name="order_cancel_after">
-        <observer name="order_cancel_after" instance="Clang\Clang\Observer\OrderCancel" shared="false" />
-    </event>
-    <event name="customer_register_success">
-        <observer name="customer_register_success" instance="Clang\Clang\Observer\CustomerRegisterEvent" shared="false" />
-    </event>
-    <event name="adminhtml_customer_save_after">
-        <observer name="adminhtml_customer_save_after" instance="Clang\Clang\Observer\CustomerSaveEvent" shared="false" />
-    </event-->
-	<!-- events -->
 </config>

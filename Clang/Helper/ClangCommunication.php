@@ -40,7 +40,6 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
         $this->clangApi             = $clangApi;
 
         $this->logger = $context->getLogger();
-        $this->logger->info('TEST');
     }
 
     public function isStoreConnected($storeId){
@@ -51,7 +50,6 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
     protected $queuedData = [];
 
     public function queueData($storeId, $endpoint, $data, $id = null){
-            $this->logger->info(__METHOD__);
         if($this->isStoreConnected($storeId)){
             if(is_null($id)){
                 $id = md5($storeId.$endpoint.json_encode($data));
@@ -61,7 +59,6 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function postQueue(){
-            $this->logger->info(__METHOD__);
         foreach($this->queuedData as $data){
             $this->postData($data[0], $data[1], $data[2]);
         }
@@ -69,7 +66,6 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function clearQueue($id = null){
-            $this->logger->info(__METHOD__);
         if(is_null($id)){
             $this->queuedData = [];
         }
@@ -80,7 +76,6 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function postData($storeId, $endpoint, $data){
         if($this->isStoreConnected($storeId)){
-            $this->logger->info('postData');
             $this->clangApi->postData($storeId, $endpoint, $data);
         }
     }

@@ -25,10 +25,6 @@ class PostDispatch implements ObserverInterface {
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer) {
-
-        //TODO: Dit is niet meer nodig. Want we doen t via de transport.
-
-        $this->logger->info('POSTDISPATCH');
         $this->clangCommunication->postQueue();
 
         return $this;

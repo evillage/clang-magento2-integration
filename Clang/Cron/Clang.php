@@ -14,7 +14,6 @@ class Clang {
         $this->clangApi             = $clangApi;
 
         $this->logger = $logger;
-        $this->logger->info('TEST');
     }
 
     public function execute() {

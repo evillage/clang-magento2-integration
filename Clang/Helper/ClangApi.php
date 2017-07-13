@@ -43,7 +43,6 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         $this->callLogFactory       = $callLogFactory;
 
         $this->logger = $context->getLogger();
-        $this->logger->info('TEST');
     }
 
     public function getConnectedStoreIds(){
@@ -111,7 +110,6 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     protected function request($storeId, $method, $endpointName, $path = '', $data = null, $headers = []) {
-        $this->logger->info('REQUEST');
         try{
 
             $token       = $this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId);
@@ -120,14 +118,8 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                 $endpoint = $this->configReader->getValue('clang/clang/endpoint/generic', ScopeInterface::SCOPE_STORES, $storeId).str_replace('_','-',$endpointName);
             }
 
-            $this->logger->info($token);
-            $this->logger->info($endpoint);
-
             $url         = $endpoint.($path?'/'.$path:'').'?token='.$token;
             $data_string = json_encode($data);
-
-            $this->logger->info($url);
-            $this->logger->info($data_string);
 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -147,7 +139,6 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                     $h[] = $key.': '.$value;
                 }
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $h);
-                $this->logger->info(serialize($h));
             }
 
             curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -156,17 +147,13 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
             });
             $response = curl_exec($ch);
 
-            $this->logger->info($response);
-
             // Check HTTP status code
             if (!curl_errno($ch)) {
                 $info = curl_getinfo($ch);
                 $http_code = $info['http_code'];
-                $this->logger->info(print_r($info,1));
                 curl_close($ch);
                 switch ($http_code) {
                     case 200:  # OK
-                        $this->logger->info('SUCCESS: '.$http_code);
                         $result = json_decode($response, true);
                         return $result;
                     default:

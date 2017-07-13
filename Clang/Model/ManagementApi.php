@@ -64,7 +64,6 @@ class ManagementApi
         $this->subscriber            = $subscriber;
 
         $this->logger = $logger;
-        $this->logger->info(get_class($configReader));
     }
 
     /**
@@ -195,7 +194,6 @@ class ManagementApi
         foreach($mailSettings as $mailSetting){
 
             $storeId = $mailSetting->getStoreId();
-            $this->logger->info('disabled: '.$mailSetting->getDisabled());
 
             $this->configWriter->save('clang/clang/disable_mail/'.$mailSetting->getMailName(), $mailSetting->getDisabled(), ScopeInterface::SCOPE_STORES, $storeId);
 

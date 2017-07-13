@@ -37,9 +37,6 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         $this->clangCommunication = $clangCommunication;
         $this->clangDataHelper    = $clangDataHelper;
         $this->logger = $logger;
-
-        $this->logger->info('TRANSPORTBUILDER: MY TRANSPORTBUILDER');
-
     }
 
     /**
@@ -73,8 +70,6 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         if($storeId){
             $data['store_id'] = $storeId;
         }
-
-        $this->logger->info('TRANSPORTBUILDER: STORE: '.$storeId);
 
         $endpoint = '';
         switch($templateIdentifier){
@@ -173,11 +168,9 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         $disableMail = $this->configReader->getValue('clang/clang/disable_mail/'.$endpoint, ScopeInterface::SCOPE_STORES, $storeId);
 
         if($disableMail){
-            $this->logger->info('TRANSPORTBUILDER: DUMMY: '.$storeId);
             return new DummyTransport();
         }
         else{
-            $this->logger->info('TRANSPORTBUILDER: NO DUMMY: '.$storeId);
             return parent::getTransport();
         }
     }

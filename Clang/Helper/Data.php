@@ -57,20 +57,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $data = $this->toArray($data->__toArray(), $objects);
                 $data = array_merge($this->enrichLinks($origObject), $data);
             }
-            else{
-
-                $this->logger->info('UNKNOWN OBJECT: '.get_class($data));
-            }
-
-            /*
-            else{
-                $result = [];
-                foreach($data as $key => $value){
-                    $result[$key] = $this->toArray($value, $objects);
-                }
-                return $result;
-            }
-            */
         }
         return $data;
     }
