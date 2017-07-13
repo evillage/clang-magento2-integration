@@ -50,6 +50,4 @@ class InfoResponse extends \Magento\Framework\Model\AbstractModel implements \Cl
     {
         return $this->setData(self::KEY_VERSION, $version);
     }
-
-
 }

@@ -3,9 +3,9 @@
  * Copyright © 2015 Clang . All rights reserved.
  */
 namespace Clang\Clang\Helper;
+
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-
     protected $logger;
 
     /**
@@ -19,46 +19,43 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->logger = $context->getLogger();
     }
 
-    protected function enrichLinks($origObject){
+    protected function enrichLinks($origObject)
+    {
         $data = [];
         $reflObj = new \ReflectionObject($origObject);
-        foreach($reflObj->getMethods(\ReflectionMethod::IS_PUBLIC) as $method){
-            try{
-                if(!$method->isStatic() && $method->getNumberOfParameters() == 0 && preg_match('/^get(\w*Link)$/', $method->name, $matches)){
+        foreach ($reflObj->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            try {
+                if (!$method->isStatic() && $method->getNumberOfParameters() == 0 && preg_match('/^get(\w*Link)$/', $method->name, $matches)) {
                     $varName = strtolower(preg_replace('/(.)([A-Z])/', '$1_$2', $matches[1]));
                     $data[$varName] = $method->invoke($origObject);
                 }
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 // Ignore
             }
         }
         return $data;
     }
 
-    public function toArray($data, array &$objects){
-        if(is_array($data)){
-            foreach($data as &$value){
+    public function toArray($data, array &$objects)
+    {
+        if (is_array($data)) {
+            foreach ($data as &$value) {
                 $value = $this->toArray($value, $objects);
             }
-        }
-        elseif(is_object($data) && !isset($objects[spl_object_hash($data)])){
+        } elseif (is_object($data) && !isset($objects[spl_object_hash($data)])) {
             $objects[spl_object_hash($data)] = true;
             $origObject = $data;
-            if($data instanceof \Magento\Framework\Model\AbstractModel && method_exists($data, 'getData')){
+            if ($data instanceof \Magento\Framework\Model\AbstractModel && method_exists($data, 'getData')) {
                 $data = $this->toArray($data->getData(), $objects);
                 $data = array_merge($this->enrichLinks($origObject), $data);
-            }
-            elseif($data instanceof \Magento\Framework\DataObject){
+            } elseif ($data instanceof \Magento\Framework\DataObject) {
                 $data = $this->toArray($data->getData(), $objects);
                 $data = array_merge($this->enrichLinks($origObject), $data);
-            }
-            elseif($data instanceof \Magento\Framework\Api\AbstractSimpleObject){
+            } elseif ($data instanceof \Magento\Framework\Api\AbstractSimpleObject) {
                 $data = $this->toArray($data->__toArray(), $objects);
                 $data = array_merge($this->enrichLinks($origObject), $data);
             }
         }
         return $data;
     }
-
 }

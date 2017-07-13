@@ -2,6 +2,7 @@
 
 
 namespace Clang\Clang\Model;
+
 use \Magento\Framework\App\Config\ScopeConfigInterface;
 use \Magento\Framework\App\Config\Storage\WriterInterface;
 use \Magento\Framework\App\Cache\TypeListInterface;
@@ -11,8 +12,6 @@ use \Magento\Store\Model\ScopeInterface;
 
 class ManagementApi
 {
-
-
     protected $configWriter;
     protected $configReader;
     protected $cacheTypeList;
@@ -46,8 +45,7 @@ class ManagementApi
 
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resource
-    )
-    {
+    ) {
         $this->configWriter          = $configWriter;
         $this->configReader          = $configReader;
         $this->cacheTypeList         = $cacheTypeList;
@@ -69,7 +67,8 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function getProductUrlBySku($sku, $storeId){
+    public function getProductUrlBySku($sku, $storeId)
+    {
         $product = $this->productRepository->get($sku, false, $storeId);
         return $product->getUrlModel()->getUrl($product);
     }
@@ -98,12 +97,12 @@ class ManagementApi
      */
     public function setup($settings)
     {
-        foreach($settings as $storeSettings){
+        foreach ($settings as $storeSettings) {
             $storeId = $storeSettings->getStoreId();
 
             $this->configWriter->save('clang/clang/clang_token', $storeSettings->getClangToken(), ScopeInterface::SCOPE_STORES, $storeId);
 
-            foreach($storeSettings->getEndPoints() as $endpoint){
+            foreach ($storeSettings->getEndPoints() as $endpoint) {
                 $this->configWriter->save('clang/clang/endpoint/'.$endpoint->getType(), $endpoint->getEndPoint(), ScopeInterface::SCOPE_STORES, $storeId);
             }
         }
@@ -125,11 +124,11 @@ class ManagementApi
     public function check_setup()
     {
         $settings = [];
-        foreach($this->storeManager->getStores() as $store){
+        foreach ($this->storeManager->getStores() as $store) {
             $storeId = $store->getId();
             $endpoints = [];
 
-            foreach(['cron-status', 'new-order', 'generic'] as $type){
+            foreach (['cron-status', 'new-order', 'generic'] as $type) {
                 $endpoint = $this->endPointFactory->create();
                 $endpoint->setType($type);
                 $endpoint->setEndPoint($this->configReader->getValue('clang/clang/endpoint/'.$type, ScopeInterface::SCOPE_STORES, $storeId));
@@ -150,19 +149,20 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function get_log($filter, $page = false, $pageSize = false){
+    public function get_log($filter, $page = false, $pageSize = false)
+    {
         $builder = $this->searchCriteriaBuilder
             ->setPageSize($pageSize ?: 25)
             ->setCurrentPage($page ?: 1);
 
         $filter = json_decode($filter, true);
 
-        foreach($filter as $f){
-            if(
-                in_array($f['field'],     ['id', 'store_id', 'endpoint', 'data', 'response_code', 'response', 'call_time']) &&
+        foreach ($filter as $f) {
+            if (
+                in_array($f['field'], ['id', 'store_id', 'endpoint', 'data', 'response_code', 'response', 'call_time']) &&
                 in_array($f['operation'], ['eq', 'lt', 'gt'])
-            ){
-                switch($f['field']){
+            ) {
+                switch ($f['field']) {
                     case 'id':
                         $builder->addFilter('clang_clang_calllog_id', $f['value'], $f['operation']);
                         break;
@@ -180,7 +180,7 @@ class ManagementApi
 
         header('X-Count: '.$total);
         header('X-Page-Count: '.ceil($total/$pageSize));
-        if($total > ($page-1)*$pageSize){
+        if ($total > ($page-1)*$pageSize) {
             return $callLog->getItems();
         }
         return [];
@@ -189,17 +189,17 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function disableMails($mailSettings){
+    public function disableMails($mailSettings)
+    {
         $mailNames = [];
-        foreach($mailSettings as $mailSetting){
-
+        foreach ($mailSettings as $mailSetting) {
             $storeId = $mailSetting->getStoreId();
 
             $this->configWriter->save('clang/clang/disable_mail/'.$mailSetting->getMailName(), $mailSetting->getDisabled(), ScopeInterface::SCOPE_STORES, $storeId);
 
             $mailNames[] = $mailSetting->getMailName();
         }
-        $this->configWriter->save('clang/clang/disable_mailnames', implode(',',$mailNames));
+        $this->configWriter->save('clang/clang/disable_mailnames', implode(',', $mailNames));
 
         $types = array('config');
         foreach ($types as $type) {
@@ -215,14 +215,15 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function checkMails(){
+    public function checkMails()
+    {
         $settings = [];
-        $mailNames = array_filter(explode(',',$this->configReader->getValue('clang/clang/disable_mailnames')));
+        $mailNames = array_filter(explode(',', $this->configReader->getValue('clang/clang/disable_mailnames')));
 
-        foreach($this->storeManager->getStores() as $store){
+        foreach ($this->storeManager->getStores() as $store) {
             $storeId = $store->getId();
 
-            foreach($mailNames as $type){
+            foreach ($mailNames as $type) {
                 $mailSetting = $this->mailSettingFactory->create();
                 $mailSetting->setStoreId($storeId);
                 $mailSetting->setMailName($type);
@@ -232,13 +233,13 @@ class ManagementApi
             }
         }
         return $settings;
-
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUnsubscribeUrl($emailaddress, $storeId){
+    public function getUnsubscribeUrl($emailaddress, $storeId)
+    {
         $connection = $this->subscriber->getResource()->getConnection();
 
         $select = $connection->select()->from($this->subscriber->getResource()->getMainTable())->where('subscriber_email=:subscriber_email and store_id=:store_id');
@@ -253,6 +254,5 @@ class ManagementApi
         }
 
         return $this->subscriber->addData($result)->getUnsubscriptionLink();
-
     }
 }

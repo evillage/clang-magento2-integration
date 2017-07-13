@@ -3,6 +3,7 @@
  * Copyright © 2015 Clang . All rights reserved.
  */
 namespace Clang\Clang\Helper;
+
 use \Magento\Framework\App\Config\ScopeConfigInterface;
 use \Magento\Framework\Module\ModuleListInterface;
 use \Magento\Store\Model\StoreManagerInterface;
@@ -13,7 +14,6 @@ use \Magento\Store\Model\ScopeInterface;
 
 class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
 {
-
     const MODULE_NAME = 'Clang_Clang';
 
     protected $configReader;
@@ -45,11 +45,12 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         $this->logger = $context->getLogger();
     }
 
-    public function getConnectedStoreIds(){
+    public function getConnectedStoreIds()
+    {
         $storeIds = [];
-        foreach($this->storeManager->getStores() as $store){
+        foreach ($this->storeManager->getStores() as $store) {
             $storeId = $store->getId();
-            if($this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId)){
+            if ($this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId)) {
                 $storeIds[] = $storeId;
             }
         }
@@ -66,8 +67,9 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->productMetadata->getVersion();
     }
 
-    public function postCronStatus(){
-        foreach($this->getConnectedStoreIds() as $storeId){
+    public function postCronStatus()
+    {
+        foreach ($this->getConnectedStoreIds() as $storeId) {
             $data = [
                 'base_url'          => $this->storeManager->getStore()->getBaseUrl(),
                 'extension_version' => $this->getExtensionVersion(),
@@ -79,20 +81,23 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
-    public function pingClang(){
+    public function pingClang()
+    {
         $responses = [];
-        foreach($this->getConnectedStoreIds() as $storeId){
+        foreach ($this->getConnectedStoreIds() as $storeId) {
             $responses[] = $this->post($storeId, 'ping', '', ['ping'=>'pong']);
         }
         return $responses;
     }
 
-    public function postData($storeId, $endpoint, $data){
+    public function postData($storeId, $endpoint, $data)
+    {
         $logId = $this->logCall($storeId, $endpoint, '', $data);
         return $this->post($storeId, $endpoint, '', $data, ['X-Reference'=>$logId, 'X-Identifier'=>'Magento Extension '.$this->getExtensionVersion()]);
     }
 
-    protected function logCall($storeId, $endpoint, $path, $data){
+    protected function logCall($storeId, $endpoint, $path, $data)
+    {
         return $this->callLogFactory->create()
             ->setData('endpoint', $endpoint.($path?'/'.$path:''))
             ->setData('response_code', '')
@@ -102,20 +107,20 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
             ->setData('call_time', date('Y-m-d H:i:s'))
             ->save()
             ->getId();
-
     }
 
-    protected function post($storeId, $endpoint, $path, $data, $headers = []){
+    protected function post($storeId, $endpoint, $path, $data, $headers = [])
+    {
         return $this->request($storeId, 'POST', $endpoint, $path, $data, $headers);
     }
 
-    protected function request($storeId, $method, $endpointName, $path = '', $data = null, $headers = []) {
-        try{
-
+    protected function request($storeId, $method, $endpointName, $path = '', $data = null, $headers = [])
+    {
+        try {
             $token       = $this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId);
             $endpoint    = $this->configReader->getValue('clang/clang/endpoint/'.$endpointName, ScopeInterface::SCOPE_STORES, $storeId);
-            if(!$endpoint){
-                $endpoint = $this->configReader->getValue('clang/clang/endpoint/generic', ScopeInterface::SCOPE_STORES, $storeId).str_replace('_','-',$endpointName);
+            if (!$endpoint) {
+                $endpoint = $this->configReader->getValue('clang/clang/endpoint/generic', ScopeInterface::SCOPE_STORES, $storeId).str_replace('_', '-', $endpointName);
             }
 
             $url         = $endpoint.($path?'/'.$path:'').'?token='.$token;
@@ -127,22 +132,22 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
-            if($data){
+            if ($data) {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
                 $headers['Content-Type'] = 'application/json';
                 $headers['Content-Length'] = strlen($data_string);
             }
 
-            if($headers){
+            if ($headers) {
                 $h = [];
-                foreach($headers as $key => $value){
+                foreach ($headers as $key => $value) {
                     $h[] = $key.': '.$value;
                 }
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $h);
             }
 
             curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($curl, $headerData){
+            curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($curl, $headerData) {
                 return strlen($headerData);
             });
             $response = curl_exec($ch);
@@ -159,17 +164,14 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                     default:
                         $this->logger->info('Unexpected HTTP code: '.$http_code);
                 }
-            }
-            else{
+            } else {
                 $this->logger->info('CURL ERR: '.curl_errno($ch));
             }
 
             return;
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             $this->logger->info('EXCEPTION: '.$e->getMessage());
             $this->logger->info('EXCEPTION: '.$e->getTraceAsString());
         }
-
     }
 }

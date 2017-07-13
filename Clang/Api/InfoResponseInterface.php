@@ -36,5 +36,4 @@ interface InfoResponseInterface
      */
 
     public function setMagentoVersion($version);
-
 }

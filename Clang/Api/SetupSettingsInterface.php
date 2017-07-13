@@ -50,5 +50,4 @@ interface SetupSettingsInterface
      */
 
     public function setEndPoints($endpoints);
-
 }

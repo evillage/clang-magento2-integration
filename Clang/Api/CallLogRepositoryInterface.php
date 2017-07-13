@@ -4,7 +4,7 @@ namespace Clang\Clang\Api;
 use Clang\Clang\Model\CallLogInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 
-interface CallLogRepositoryInterface 
+interface CallLogRepositoryInterface
 {
     public function save(CallLogInterface $page);
 

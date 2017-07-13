@@ -12,8 +12,8 @@ use Magento\Framework\Mail\Template\SenderResolverInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
-class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder {
-
+class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
+{
     protected $logger;
     protected $clangCommunication;
     protected $clangDataHelper;
@@ -47,32 +47,36 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
     public function getTransport()
     {
         $templateIdentifier = $this->templateIdentifier;
-        if(is_numeric($templateIdentifier) && $this->getTemplate()){
+        if (is_numeric($templateIdentifier) && $this->getTemplate()) {
             $tpl = $this->getTemplate()->load($templateIdentifier);
-            if(is_callable([$tpl, 'getTemplateCode'])){
+            if (is_callable([$tpl, 'getTemplateCode'])) {
                 $templateIdentifier = $tpl->getTemplateCode();
             }
         }
         $data = [];
-        foreach($this->templateOptions as $key => $value){
+        foreach ($this->templateOptions as $key => $value) {
             unset($objects);
             $objects = [];
             $data[$key] = $this->clangDataHelper->toArray($value, $objects);
-            if($key == 'store' && is_scalar($value)) $storeId = $value;
+            if ($key == 'store' && is_scalar($value)) {
+                $storeId = $value;
+            }
         }
-        foreach($this->templateVars as $key => $value){
+        foreach ($this->templateVars as $key => $value) {
             unset($objects);
             $objects = [];
             $data[$key] = $this->clangDataHelper->toArray($value, $objects);
-            if($key == 'store' && is_scalar($value)) $storeId = $value;
+            if ($key == 'store' && is_scalar($value)) {
+                $storeId = $value;
+            }
         }
 
-        if($storeId){
+        if ($storeId) {
             $data['store_id'] = $storeId;
         }
 
         $endpoint = '';
-        switch($templateIdentifier){
+        switch ($templateIdentifier) {
             case 'sales_email_order_template':
             case 'sales_email_order_guest_template':{
                 $endpoint = 'order';
@@ -167,12 +171,10 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
 
         $disableMail = $this->configReader->getValue('clang/clang/disable_mail/'.$endpoint, ScopeInterface::SCOPE_STORES, $storeId);
 
-        if($disableMail){
+        if ($disableMail) {
             return new DummyTransport();
-        }
-        else{
+        } else {
             return parent::getTransport();
         }
     }
-
 }

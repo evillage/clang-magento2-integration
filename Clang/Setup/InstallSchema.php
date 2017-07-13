@@ -1,5 +1,6 @@
 <?php
 namespace Clang\Clang\Setup;
+
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
     public function install(\Magento\Framework\Setup\SchemaSetupInterface $setup, \Magento\Framework\Setup\ModuleContextInterface $context)
@@ -73,7 +74,7 @@ $table = $installer->getConnection()->newTable(
             [ 'nullable' => false, 'default' => '1', ],
             'Is Active'
         );
-$installer->getConnection()->createTable($table);
+        $installer->getConnection()->createTable($table);
 //END   table setup
 $installer->endSetup();
     }

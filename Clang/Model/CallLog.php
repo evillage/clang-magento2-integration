@@ -1,5 +1,6 @@
 <?php
 namespace Clang\Clang\Model;
+
 class CallLog extends \Magento\Framework\Model\AbstractModel implements CallLogInterface, \Magento\Framework\DataObject\IdentityInterface
 {
     const CACHE_TAG = 'clang_clang_calllog';
@@ -17,49 +18,56 @@ class CallLog extends \Magento\Framework\Model\AbstractModel implements CallLogI
     /**
      * {@inheritdoc}
      */
-    public function getId(){
+    public function getId()
+    {
         return $this->getData('clang_clang_calllog_id');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEndpoint(){
+    public function getEndpoint()
+    {
         return $this->getData('endpoint');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRequestData(){
+    public function getRequestData()
+    {
         return $this->getData('data');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getResponse(){
+    public function getResponse()
+    {
         return $this->getData('response');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getResponseCode(){
+    public function getResponseCode()
+    {
         return $this->getData('response_code');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getStoreId(){
+    public function getStoreId()
+    {
         return $this->getData('store_id');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCallTime(){
+    public function getCallTime()
+    {
         return $this->getData('call_time');
     }
 }

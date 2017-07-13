@@ -35,5 +35,4 @@ interface EndPointInterface
      */
 
     public function setEndPoint($endpoint);
-
 }

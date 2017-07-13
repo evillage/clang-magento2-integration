@@ -67,6 +67,4 @@ class MailSetting extends \Magento\Framework\Model\AbstractModel implements \Cla
     {
         return $this->setData(self::KEY_DISABLED, (boolean)$disabled);
     }
-
-
 }

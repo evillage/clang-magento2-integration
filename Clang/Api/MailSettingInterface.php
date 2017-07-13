@@ -49,5 +49,4 @@ interface MailSettingInterface
      */
 
     public function setDisabled($disabled);
-
 }

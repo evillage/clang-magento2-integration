@@ -3,6 +3,7 @@
  * Copyright © 2015 Clang . All rights reserved.
  */
 namespace Clang\Clang\Helper;
+
 use \Magento\Framework\App\Config\ScopeConfigInterface;
 use \Magento\Framework\Module\ModuleListInterface;
 use \Magento\Store\Model\StoreManagerInterface;
@@ -13,7 +14,6 @@ use \Magento\Store\Model\ScopeInterface;
 
 class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
 {
-
     protected $configReader;
     protected $storeManager;
     protected $moduleList;
@@ -42,40 +42,44 @@ class ClangCommunication extends \Magento\Framework\App\Helper\AbstractHelper
         $this->logger = $context->getLogger();
     }
 
-    public function isStoreConnected($storeId){
+    public function isStoreConnected($storeId)
+    {
         $token = $this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId);
         return !empty($token);
     }
 
     protected $queuedData = [];
 
-    public function queueData($storeId, $endpoint, $data, $id = null){
-        if($this->isStoreConnected($storeId)){
-            if(is_null($id)){
+    public function queueData($storeId, $endpoint, $data, $id = null)
+    {
+        if ($this->isStoreConnected($storeId)) {
+            if (is_null($id)) {
                 $id = md5($storeId.$endpoint.json_encode($data));
             }
             $this->queuedData[$id] = [$storeId, $endpoint, $data];
         }
     }
 
-    public function postQueue(){
-        foreach($this->queuedData as $data){
+    public function postQueue()
+    {
+        foreach ($this->queuedData as $data) {
             $this->postData($data[0], $data[1], $data[2]);
         }
         $this->queuedData = [];
     }
 
-    public function clearQueue($id = null){
-        if(is_null($id)){
+    public function clearQueue($id = null)
+    {
+        if (is_null($id)) {
             $this->queuedData = [];
-        }
-        else{
+        } else {
             unset($this->queuedData[$id]);
         }
     }
 
-    public function postData($storeId, $endpoint, $data){
-        if($this->isStoreConnected($storeId)){
+    public function postData($storeId, $endpoint, $data)
+    {
+        if ($this->isStoreConnected($storeId)) {
             $this->clangApi->postData($storeId, $endpoint, $data);
         }
     }

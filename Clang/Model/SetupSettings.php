@@ -67,6 +67,4 @@ class SetupSettings extends \Magento\Framework\Model\AbstractModel implements \C
     {
         return $this->setData(self::KEY_ENDPOINTS, $endpoints);
     }
-
-
 }

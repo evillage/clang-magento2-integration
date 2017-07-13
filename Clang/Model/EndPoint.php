@@ -50,6 +50,4 @@ class EndPoint extends \Magento\Framework\Model\AbstractModel implements \Clang\
     {
         return $this->setData(self::KEY_ENDPOINT, $endpoint);
     }
-
-
 }
