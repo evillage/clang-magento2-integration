@@ -6,8 +6,6 @@ namespace Clang\Clang\Helper;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    protected $logger;
-
     /**
      * @param \Magento\Framework\App\Helper\Context $context
      */
@@ -15,8 +13,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context
     ) {
         parent::__construct($context);
-
-        $this->logger = $context->getLogger();
     }
 
     protected function enrichLinks($origObject)
@@ -25,12 +21,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $reflObj = new \ReflectionObject($origObject);
         foreach ($reflObj->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             try {
-                if (!$method->isStatic() && $method->getNumberOfParameters() == 0 && preg_match('/^get(\w*Link)$/', $method->name, $matches)) {
+                if (!$method->isStatic() &&
+                    $method->getNumberOfParameters() == 0 &&
+                    preg_match('/^get(\w*Link)$/', $method->name, $matches)) {
                     $varName = strtolower(preg_replace('/(.)([A-Z])/', '$1_$2', $matches[1]));
                     $data[$varName] = $method->invoke($origObject);
                 }
             } catch (\Exception $e) {
-                // Ignore
+                // Ignore this. If any links can't be rendered we don't need them.
             }
         }
         return $data;

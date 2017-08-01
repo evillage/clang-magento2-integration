@@ -1,7 +1,9 @@
 <?php
 namespace Clang\Clang\Model;
 
-class CallLog extends \Magento\Framework\Model\AbstractModel implements CallLogInterface, \Magento\Framework\DataObject\IdentityInterface
+use \Magento\Framework\DataObject\IdentityInterface;
+
+class CallLog extends \Magento\Framework\Model\AbstractModel implements CallLogInterface, IdentityInterface
 {
     const CACHE_TAG = 'clang_clang_calllog';
 

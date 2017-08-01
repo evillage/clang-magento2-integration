@@ -9,7 +9,6 @@ use \Magento\Framework\Module\ModuleListInterface;
 use \Magento\Store\Model\StoreManagerInterface;
 use \Magento\Framework\App\Helper\Context as HelperContext;
 use \Magento\Framework\App\ProductMetadataInterface;
-use \Psr\Log\LoggerInterface;
 use \Magento\Store\Model\ScopeInterface;
 
 class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
@@ -20,7 +19,6 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
     protected $storeManager;
     protected $moduleList;
     protected $productMetadata;
-    protected $logger;
     protected $callLogFactory;
 
     /**
@@ -31,18 +29,15 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         StoreManagerInterface $storeManager,
         ModuleListInterface $moduleList,
         ProductMetadataInterface $productMetadata,
-
         \Clang\Clang\Model\CallLogFactory $callLogFactory
     ) {
         parent::__construct($context);
 
-        $this->configReader         = $context->getScopeConfig();
-        $this->storeManager         = $storeManager;
-        $this->moduleList           = $moduleList;
-        $this->productMetadata      = $productMetadata;
-        $this->callLogFactory       = $callLogFactory;
-
-        $this->logger = $context->getLogger();
+        $this->configReader    = $context->getScopeConfig();
+        $this->storeManager    = $storeManager;
+        $this->moduleList      = $moduleList;
+        $this->productMetadata = $productMetadata;
+        $this->callLogFactory  = $callLogFactory;
     }
 
     public function getConnectedStoreIds()
@@ -67,33 +62,47 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->productMetadata->getVersion();
     }
 
-    public function postCronStatus()
+    public function postStatus()
     {
+        $results = [];
         foreach ($this->getConnectedStoreIds() as $storeId) {
-            $data = [
-                'base_url'          => $this->storeManager->getStore()->getBaseUrl(),
-                'extension_version' => $this->getExtensionVersion(),
-                'magento_version'   => $this->getMagentoVersion(),
-                'store_id'          => $storeId
-            ];
+            try{
+                $data = [
+                    'base_url'          => $this->storeManager->getStore()->getBaseUrl(),
+                    'extension_version' => $this->getExtensionVersion(),
+                    'magento_version'   => $this->getMagentoVersion(),
+                    'store_id'          => $storeId
+                ];
 
-            $this->post($storeId, 'cron-status', '', $data);
+                $results[] = $this->post($storeId, 'status', '', $data);
+            }
+            catch(\Exception $e){
+                $results[] = [$e->getCode(), $e->getMessage()];
+            }
         }
-    }
-
-    public function pingClang()
-    {
-        $responses = [];
-        foreach ($this->getConnectedStoreIds() as $storeId) {
-            $responses[] = $this->post($storeId, 'ping', '', ['ping'=>'pong']);
-        }
-        return $responses;
+        return $results;
     }
 
     public function postData($storeId, $endpoint, $data)
     {
-        $logId = $this->logCall($storeId, $endpoint, '', $data);
-        return $this->post($storeId, $endpoint, '', $data, ['X-Reference'=>$logId, 'X-Identifier'=>'Magento Extension '.$this->getExtensionVersion()]);
+        $log = $this->logCall($storeId, $endpoint, '', $data);
+        try {
+            list($response_code, $response) = $this->post(
+                $storeId,
+                $endpoint,
+                '',
+                $data,
+                ['X-Reference'=>$log->getId(), 'X-Identifier'=>'Magento Extension '.$this->getExtensionVersion()]
+            );
+
+            $log->setData('response_code', $response_code);
+            $log->setData('response', $response);
+            $log->save();
+        } catch (\Exception $e) {
+            $log->setData('response_code', $e->getCode());
+            $log->setData('response', $e->getMessage());
+            $log->save();
+        }
     }
 
     protected function logCall($storeId, $endpoint, $path, $data)
@@ -105,8 +114,7 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
             ->setData('response', '')
             ->setData('data', json_encode($data))
             ->setData('call_time', date('Y-m-d H:i:s'))
-            ->save()
-            ->getId();
+            ->save();
     }
 
     protected function post($storeId, $endpoint, $path, $data, $headers = [])
@@ -117,19 +125,37 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
     protected function request($storeId, $method, $endpointName, $path = '', $data = null, $headers = [])
     {
         try {
-            $token       = $this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId);
-            $endpoint    = $this->configReader->getValue('clang/clang/endpoint/'.$endpointName, ScopeInterface::SCOPE_STORES, $storeId);
+            $token       = $this->configReader->getValue(
+                'clang/clang/clang_token',
+                ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
+
+            $endpoint    = $this->configReader->getValue(
+                'clang/clang/endpoint/'.$endpointName,
+                ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
+
             if (!$endpoint) {
-                $endpoint = $this->configReader->getValue('clang/clang/endpoint/generic', ScopeInterface::SCOPE_STORES, $storeId).str_replace('_', '-', $endpointName);
+                $endpoint = $this->configReader->getValue(
+                    'clang/clang/endpoint/generic',
+                    ScopeInterface::SCOPE_STORES,
+                    $storeId
+                );
+                $endpoint .= str_replace('_', '-', $endpointName);
             }
 
             $url         = $endpoint.($path?'/'.$path:'').'?token='.$token;
             $data_string = json_encode($data);
 
+            // Not using \Magento\Framework\HTTP\Client\Curl because we need to send json data, and the Magento Curl
+            // client doesn't support it
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
             if ($data) {
@@ -146,32 +172,25 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $h);
             }
 
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($curl, $headerData) {
-                return strlen($headerData);
-            });
             $response = curl_exec($ch);
 
             // Check HTTP status code
-            if (!curl_errno($ch)) {
-                $info = curl_getinfo($ch);
-                $http_code = $info['http_code'];
+            if (curl_errno($ch)) {
                 curl_close($ch);
-                switch ($http_code) {
-                    case 200:  # OK
-                        $result = json_decode($response, true);
-                        return $result;
-                    default:
-                        $this->logger->info('Unexpected HTTP code: '.$http_code);
-                }
-            } else {
-                $this->logger->info('CURL ERR: '.curl_errno($ch));
+                throw new \Exception(curl_error($ch), 1000+curl_errno($ch));
             }
 
-            return;
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($http_code == 200) {
+                $result = json_decode($response, true);
+                return [$http_code, $result];
+            } else {
+                throw new \Exception($response, $http_code);
+            }
         } catch (\Exception $e) {
-            $this->logger->info('EXCEPTION: '.$e->getMessage());
-            $this->logger->info('EXCEPTION: '.$e->getTraceAsString());
+            throw new \Exception($e->getMessage(), 2000+$e->getCode());
         }
     }
 }

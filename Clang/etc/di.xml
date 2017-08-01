@@ -1,14 +1,27 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="TemplateEndpointReader" type="Magento\Framework\Config\Reader\Filesystem">
+        <arguments>
+            <argument name="converter" xsi:type="object">Clang\Clang\Model\Config\TemplateEndpointConverter</argument>
+            <argument name="schemaLocator" xsi:type="object">Clang\Clang\Model\Config\TemplateEndpointSchemaLocator</argument>
+            <argument name="fileName" xsi:type="string">template_endpoints.xml</argument>
+        </arguments>
+    </virtualType>
+    <type name="Clang\Clang\Model\Config\TemplateEndpointData">
+        <arguments>
+            <argument name="reader" xsi:type="object">TemplateEndpointReader</argument>
+            <argument name="cacheId" xsi:type="string">clang_clang_template_endpoint_cache</argument>
+        </arguments>
+    </type>
+
     <preference for="Clang\Clang\Api\ManagementApiInterface" type="Clang\Clang\Model\ManagementApi"/>
 
     <preference for="Clang\Clang\Api\InfoResponseInterface" type="Clang\Clang\Model\InfoResponse"/>
+    <preference for="Clang\Clang\Api\ConnectionResponseInterface" type="Clang\Clang\Model\ConnectionResponse"/>
     <preference for="Clang\Clang\Api\SetupSettingsInterface" type="Clang\Clang\Model\SetupSettings"/>
     <preference for="Clang\Clang\Api\EndPointInterface" type="Clang\Clang\Model\EndPoint"/>
     <preference for="Clang\Clang\Api\MailSettingInterface" type="Clang\Clang\Model\MailSetting"/>
 
-    <!--virtualType name="Magento\Framework\Mail\Template\TransportBuilder" type="Clang\Clang\Helper\TransportBuilder">
-    </virtualType-->
     <type name="Magento\Sales\Model\Order\Email\SenderBuilder"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
     <type name="Magento\Checkout\Helper\Data"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>
     <type name="Magento\Customer\Model\EmailNotification"><arguments><argument name="transportBuilder" xsi:type="object">Clang\Clang\Helper\TransportBuilder</argument></arguments></type>

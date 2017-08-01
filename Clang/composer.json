@@ -1,6 +1,7 @@
 {
     "name": "clang/module-clang",
-    "description": "",
+    "description": "A module to integrate Magento with Clang e-mailmarketing software",
+    "version": "1.0.1",
     "license": "proprietary",
     "authors": [
         {
@@ -9,7 +10,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "magento/framework": "~100.0.4"
+    },
     "autoload": {
         "psr-4": {
             "Clang\\Clang\\": ""
@@ -18,13 +21,5 @@
             "registration.php"
         ]
     },
-    "type": "magento2-module",
-    "extra": {
-        "map": [
-            [
-                "*",
-                "Clang/Clang"
-            ]
-        ]
-    }
+    "type": "magento2-module"
 }

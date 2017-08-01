@@ -6,7 +6,4 @@
     <event name="customer_address_save_after">
         <observer name="customer_update" instance="Clang\Clang\Observer\CustomerUpdate" shared="false" />
     </event>
-    <event name="controller_action_postdispatch">
-        <observer name="postdispatch" instance="Clang\Clang\Observer\PostDispatch" shared="false" />
-    </event>
 </config>

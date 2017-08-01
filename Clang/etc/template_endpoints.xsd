@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="templates">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="unbounded" name="template" type="template" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="template">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="endpoint" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

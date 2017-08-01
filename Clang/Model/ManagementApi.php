@@ -17,6 +17,7 @@ class ManagementApi
     protected $cacheTypeList;
     protected $cacheFrontendPool;
     protected $infoResponseFactory;
+    protected $connectionResponseFactory;
     protected $setupSettingsFactory;
     protected $endPointFactory;
     protected $searchCriteriaBuilder;
@@ -25,43 +26,39 @@ class ManagementApi
     protected $productRepository;
     protected $clangApi;
     protected $mailSettingFactory;
-    protected $logger;
     protected $subscriber;
     public function __construct(
-        WriterInterface                                $configWriter,
-        ScopeConfigInterface                           $configReader,
-        TypeListInterface                              $cacheTypeList,
-        Pool                                           $cacheFrontendPool,
-        \Clang\Clang\Api\InfoResponseInterfaceFactory  $infoResponseFactory,
+        WriterInterface $configWriter,
+        ScopeConfigInterface $configReader,
+        TypeListInterface $cacheTypeList,
+        Pool $cacheFrontendPool,
+        \Clang\Clang\Api\InfoResponseInterfaceFactory $infoResponseFactory,
+        \Clang\Clang\Api\ConnectionResponseInterfaceFactory $connectionResponseFactory,
         \Clang\Clang\Api\SetupSettingsInterfaceFactory $setupSettingsFactory,
-        \Clang\Clang\Api\EndPointInterfaceFactory      $endPointFactory,
-        SearchCriteriaBuilder                          $searchCriteriaBuilder,
-        CallLogRepository                              $callLogRepository,
-        \Magento\Store\Model\StoreManagerInterface     $storeManager,
-        \Magento\Catalog\Model\ProductRepository       $productRepository,
-        \Clang\Clang\Api\MailSettingInterfaceFactory      $mailSettingFactory,
+        \Clang\Clang\Api\EndPointInterfaceFactory $endPointFactory,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        CallLogRepository $callLogRepository,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        \Clang\Clang\Api\MailSettingInterfaceFactory $mailSettingFactory,
         \Clang\Clang\Helper\ClangApi $clangApi,
-        \Magento\Newsletter\Model\Subscriber $subscriber,
-
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resource
+        \Magento\Newsletter\Model\Subscriber $subscriber
     ) {
-        $this->configWriter          = $configWriter;
-        $this->configReader          = $configReader;
-        $this->cacheTypeList         = $cacheTypeList;
-        $this->cacheFrontendPool     = $cacheFrontendPool;
-        $this->infoResponseFactory   = $infoResponseFactory;
-        $this->setupSettingsFactory  = $setupSettingsFactory;
-        $this->endPointFactory       = $endPointFactory;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->callLogRepository     = $callLogRepository;
-        $this->storeManager          = $storeManager;
-        $this->productRepository     = $productRepository;
-        $this->mailSettingFactory    = $mailSettingFactory;
-        $this->clangApi              = $clangApi;
-        $this->subscriber            = $subscriber;
-
-        $this->logger = $logger;
+        $this->configWriter              = $configWriter;
+        $this->configReader              = $configReader;
+        $this->cacheTypeList             = $cacheTypeList;
+        $this->cacheFrontendPool         = $cacheFrontendPool;
+        $this->infoResponseFactory       = $infoResponseFactory;
+        $this->connectionResponseFactory = $connectionResponseFactory;
+        $this->setupSettingsFactory      = $setupSettingsFactory;
+        $this->endPointFactory           = $endPointFactory;
+        $this->searchCriteriaBuilder     = $searchCriteriaBuilder;
+        $this->callLogRepository         = $callLogRepository;
+        $this->storeManager              = $storeManager;
+        $this->productRepository         = $productRepository;
+        $this->mailSettingFactory        = $mailSettingFactory;
+        $this->clangApi                  = $clangApi;
+        $this->subscriber                = $subscriber;
     }
 
     /**
@@ -69,8 +66,13 @@ class ManagementApi
      */
     public function getProductUrlBySku($sku, $storeId)
     {
+        // Find the product and return the product URL if succesful.  If product is not found an empty
+        // string is returned. Clang will handle this situation.
         $product = $this->productRepository->get($sku, false, $storeId);
-        return $product->getUrlModel()->getUrl($product);
+        if ($product) {
+            return $product->getUrlModel()->getUrl($product);
+        }
+        return '';
     }
 
     /**
@@ -78,6 +80,9 @@ class ManagementApi
      */
     public function getInfo()
     {
+        // Clang needs to know it is communicating with an updated Magento and extension. So return
+        // this information when needed.
+
         $info = $this->infoResponseFactory->create();
         $info->setMagentoVersion($this->clangApi->getMagentoVersion());
         $info->setVersion($this->clangApi->getExtensionVersion());
@@ -87,9 +92,17 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function ping()
+    public function testConnection()
     {
-        return json_encode($this->clangApi->pingClang());
+        // After Clang sets up the connection using the setup call it asks the extension to do
+        // some status calls to check for a working connection to Clang.
+        $responses = $this->clangApi->postStatus();
+
+        $info = $this->connectionResponseFactory->create();
+        $info->setMagentoVersion($this->clangApi->getMagentoVersion());
+        $info->setVersion($this->clangApi->getExtensionVersion());
+        $info->setResponses($responses);
+        return $info;
     }
 
     /**
@@ -97,20 +110,33 @@ class ManagementApi
      */
     public function setup($settings)
     {
+        // This call is used once when a connection is made from Clang to magento. Clang will provide
+        // the extension with the correct callback URLs. We store these urls in the config here. This
+        // might also be called if there are any URL changes in Clang.
         foreach ($settings as $storeSettings) {
             $storeId = $storeSettings->getStoreId();
 
-            $this->configWriter->save('clang/clang/clang_token', $storeSettings->getClangToken(), ScopeInterface::SCOPE_STORES, $storeId);
+            $this->configWriter->save(
+                'clang/clang/clang_token',
+                $storeSettings->getClangToken(),
+                ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
 
             foreach ($storeSettings->getEndPoints() as $endpoint) {
-                $this->configWriter->save('clang/clang/endpoint/'.$endpoint->getType(), $endpoint->getEndPoint(), ScopeInterface::SCOPE_STORES, $storeId);
+                $this->configWriter->save(
+                    'clang/clang/endpoint/'.$endpoint->getType(),
+                    $endpoint->getEndPoint(),
+                    ScopeInterface::SCOPE_STORES,
+                    $storeId
+                );
             }
         }
 
-        $types = array('config');
-        foreach ($types as $type) {
-            $this->cacheTypeList->cleanType($type);
-        }
+        // To create a succesfull and safe connection we need to clean up the cache immediately, otherwise
+        // there is a risk of sending data to cached URL's wich might prove to be a security risk if they
+        // are changed. Normally this call will only be executed during setup of the connection in Clang.
+        $this->cacheTypeList->cleanType('config');
         foreach ($this->cacheFrontendPool as $cacheFrontend) {
             $cacheFrontend->getBackend()->clean();
         }
@@ -121,23 +147,31 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function check_setup()
+    public function checkSetup()
     {
+        // Retrieve the set up endpoint URL's which were saved in the setup function. Clang will be able to
+        // check if these URL's are correct.
         $settings = [];
         foreach ($this->storeManager->getStores() as $store) {
             $storeId = $store->getId();
             $endpoints = [];
 
-            foreach (['cron-status', 'new-order', 'generic'] as $type) {
+            foreach (['status', 'generic'] as $type) {
                 $endpoint = $this->endPointFactory->create();
                 $endpoint->setType($type);
-                $endpoint->setEndPoint($this->configReader->getValue('clang/clang/endpoint/'.$type, ScopeInterface::SCOPE_STORES, $storeId));
+                $endpoint->setEndPoint($this->configReader->getValue(
+                    'clang/clang/endpoint/'.$type,
+                    ScopeInterface::SCOPE_STORES,
+                    $storeId
+                ));
 
                 $endpoints[] = $endpoint;
             }
 
+            $token = $this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId);
+
             $setup = $this->setupSettingsFactory->create();
-            $setup->setClangToken($this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId));
+            $setup->setClangToken($token);
             $setup->setEndPoints($endpoints);
             $setup->setStoreId($storeId);
 
@@ -149,19 +183,24 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function get_log($filter, $page = false, $pageSize = false)
+    public function getLog($filter, $page = false, $pageSize = false)
     {
+        // Retrieve the call log using some filters. This is used by Clang to retrieve any
+        // calls which were made by magento but unsuccesfully processed by Clang. Clang
+        // will be able to reprocess the data from the log to make sure no data or customer
+        // communication will be lost.
         $builder = $this->searchCriteriaBuilder
             ->setPageSize($pageSize ?: 25)
             ->setCurrentPage($page ?: 1);
 
         $filter = json_decode($filter, true);
 
+        $allowedFields = ['id', 'store_id', 'endpoint', 'data', 'response_code', 'response', 'call_time'];
+        $allowedOps = ['eq', 'lt', 'gt'];
+
         foreach ($filter as $f) {
-            if (
-                in_array($f['field'], ['id', 'store_id', 'endpoint', 'data', 'response_code', 'response', 'call_time']) &&
-                in_array($f['operation'], ['eq', 'lt', 'gt'])
-            ) {
+            if (in_array($f['field'], $allowedFields) &&
+                in_array($f['operation'], $allowedOps)) {
                 switch ($f['field']) {
                     case 'id':
                         $builder->addFilter('clang_clang_calllog_id', $f['value'], $f['operation']);
@@ -191,20 +230,28 @@ class ManagementApi
      */
     public function disableMails($mailSettings)
     {
+
+        // Enable / disable mails. This is used when there is a mail campaign
+        // setup in Clang to tell the extension to stop sending messages for this
+        // campaign using magento (because Clang is sending the messages already).
         $mailNames = [];
         foreach ($mailSettings as $mailSetting) {
             $storeId = $mailSetting->getStoreId();
 
-            $this->configWriter->save('clang/clang/disable_mail/'.$mailSetting->getMailName(), $mailSetting->getDisabled(), ScopeInterface::SCOPE_STORES, $storeId);
+            $this->configWriter->save(
+                'clang/clang/disable_mail/'.$mailSetting->getMailName(),
+                $mailSetting->getDisabled(),
+                ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
 
             $mailNames[] = $mailSetting->getMailName();
         }
         $this->configWriter->save('clang/clang/disable_mailnames', implode(',', $mailNames));
 
-        $types = array('config');
-        foreach ($types as $type) {
-            $this->cacheTypeList->cleanType($type);
-        }
+        // We need to clean up the cache immediately, otherwise there is a high risk of sending duplicate
+        // communication to customers because both Clang and Magento will be sending messages then.
+        $this->cacheTypeList->cleanType('config');
         foreach ($this->cacheFrontendPool as $cacheFrontend) {
             $cacheFrontend->getBackend()->clean();
         }
@@ -217,6 +264,9 @@ class ManagementApi
      */
     public function checkMails()
     {
+        // Check enabled / disabled mails. Used by Clang to verify which messages are
+        // send by Magento and which are not, to make sure Clang doesn't send the same
+        // messages.
         $settings = [];
         $mailNames = array_filter(explode(',', $this->configReader->getValue('clang/clang/disable_mailnames')));
 
@@ -224,10 +274,16 @@ class ManagementApi
             $storeId = $store->getId();
 
             foreach ($mailNames as $type) {
+                $disabled = $this->configReader->getValue(
+                    'clang/clang/disable_mail/'.$type,
+                    ScopeInterface::SCOPE_STORES,
+                    $storeId
+                );
+
                 $mailSetting = $this->mailSettingFactory->create();
                 $mailSetting->setStoreId($storeId);
                 $mailSetting->setMailName($type);
-                $mailSetting->setDisabled($this->configReader->getValue('clang/clang/disable_mail/'.$type, ScopeInterface::SCOPE_STORES, $storeId));
+                $mailSetting->setDisabled($disabled);
 
                 $settings[] = $mailSetting;
             }
@@ -240,9 +296,14 @@ class ManagementApi
      */
     public function getUnsubscribeUrl($emailaddress, $storeId)
     {
+        // Get unsubscribe url for a customer. Needed because a lot of countries require
+        // working unsubscribe url's in all mail messages.
         $connection = $this->subscriber->getResource()->getConnection();
 
-        $select = $connection->select()->from($this->subscriber->getResource()->getMainTable())->where('subscriber_email=:subscriber_email and store_id=:store_id');
+        $select = $connection
+            ->select()
+            ->from($this->subscriber->getResource()->getMainTable())
+            ->where('subscriber_email=:subscriber_email and store_id=:store_id');
 
         $result = $connection->fetchRow($select, [
             'subscriber_email' => $emailaddress,

@@ -2,7 +2,7 @@
 
 namespace Clang\Clang\Api;
 
-interface InfoResponseInterface
+interface ConnectionResponseInterface
 {
 
     /**
@@ -34,4 +34,19 @@ interface InfoResponseInterface
      */
 
     public function setMagentoVersion($version);
+
+    /**
+     * Connection responses
+     * @return array
+     */
+
+    public function getConnectionResponse();
+
+    /**
+     * Set the Connection responses
+     * @param array $response
+     * @return array
+     */
+
+    public function setConnectionResponse($response);
 }

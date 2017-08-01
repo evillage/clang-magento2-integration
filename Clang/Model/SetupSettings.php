@@ -8,18 +8,6 @@ class SetupSettings extends \Magento\Framework\Model\AbstractModel implements \C
     const KEY_CLANGTOKEN = 'clang_token';
     const KEY_ENDPOINTS  = 'end_points';
 
-
-    public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-    }
-
-
     /**
      * {@inheritdoc}
      */

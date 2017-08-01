@@ -7,7 +7,6 @@ use Magento\Framework\Event\ObserverInterface;
 
 class CustomerUpdate implements ObserverInterface
 {
-    protected $logger;
     protected $clangCommunication;
     protected $clangDataHelper;
     protected $customerRegistry;
@@ -15,13 +14,11 @@ class CustomerUpdate implements ObserverInterface
     public function __construct(
         \Clang\Clang\Helper\ClangCommunication $clangCommunication,
         \Clang\Clang\Helper\Data $clangDataHelper,
-        \Magento\Customer\Model\CustomerRegistry $customerRegistry,
-        \Psr\Log\LoggerInterface $logger
+        \Magento\Customer\Model\CustomerRegistry $customerRegistry
     ) {
         $this->clangCommunication = $clangCommunication;
         $this->clangDataHelper = $clangDataHelper;
         $this->customerRegistry = $customerRegistry;
-        $this->logger = $logger;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -50,7 +47,7 @@ class CustomerUpdate implements ObserverInterface
                 $objects = [];
                 $data = $this->clangDataHelper->toArray($customer->getDataModel(), $objects);
 
-                $this->clangCommunication->queueData($storeId, 'update-customer', ['customer'=>$data], 'customer-'.$storeId.'-'.$customerId);
+                $this->clangCommunication->postData($storeId, 'update-customer', ['customer'=>$data]);
             }
         }
         return $this;

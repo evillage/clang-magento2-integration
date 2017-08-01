@@ -3,15 +3,17 @@ namespace Clang\Clang\Setup;
 
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
-    public function install(\Magento\Framework\Setup\SchemaSetupInterface $setup, \Magento\Framework\Setup\ModuleContextInterface $context)
-    {
+    public function install(
+        \Magento\Framework\Setup\SchemaSetupInterface $setup,
+        \Magento\Framework\Setup\ModuleContextInterface $context
+    ) {
         $installer = $setup;
         $installer->startSetup();
         //START: install stuff
         //END:   install stuff
 
-//START table setup
-$table = $installer->getConnection()->newTable(
+        //START table setup
+        $table = $installer->getConnection()->newTable(
             $installer->getTable('clang_clang_calllog')
         )->addColumn(
             'clang_clang_calllog_id',
@@ -73,9 +75,18 @@ $table = $installer->getConnection()->newTable(
             null,
             [ 'nullable' => false, 'default' => '1', ],
             'Is Active'
+        )->addIndex(
+            $installer->getIdxName(
+                Helper::CONNECTOR_CHANNELS_STANDARD_TABLE,
+                ['creation_time'],
+                \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_INDEX
+            ),
+            'creation_time',
+            ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_INDEX]
         );
         $installer->getConnection()->createTable($table);
-//END   table setup
-$installer->endSetup();
+
+        //END   table setup
+        $installer->endSetup();
     }
 }

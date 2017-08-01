@@ -7,18 +7,6 @@ class EndPoint extends \Magento\Framework\Model\AbstractModel implements \Clang\
     const KEY_TYPE = 'type';
     const KEY_ENDPOINT = 'end_point';
 
-
-    public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-    }
-
-
     /**
      * {@inheritdoc}
      */
