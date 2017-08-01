@@ -66,7 +66,7 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $results = [];
         foreach ($this->getConnectedStoreIds() as $storeId) {
-            try{
+            try {
                 $data = [
                     'base_url'          => $this->storeManager->getStore()->getBaseUrl(),
                     'extension_version' => $this->getExtensionVersion(),
@@ -75,8 +75,7 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                 ];
 
                 $results[] = $this->post($storeId, 'status', '', $data);
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $results[] = [$e->getCode(), $e->getMessage()];
             }
         }
