@@ -1,0 +1,13 @@
+Release notes
+=============
+
+1.0.1
+-----
+
+*Compatible with CE:* 2.0 2.1 2.2
+*Stability:* Stable Build
+*Description:*
+
+* Initial release.
+* Implemented API to setup the extension from Clang
+* Sending data to Clang API when sending messages
