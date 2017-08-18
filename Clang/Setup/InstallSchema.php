@@ -77,7 +77,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
             'Is Active'
         )->addIndex(
             $installer->getIdxName(
-                Helper::CONNECTOR_CHANNELS_STANDARD_TABLE,
+                'clang_clang_calllog',
                 ['creation_time'],
                 \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_INDEX
             ),
