@@ -6,6 +6,7 @@ class SetupSettings extends \Magento\Framework\Model\AbstractModel implements \C
 {
     const KEY_STOREID    = 'store_id';
     const KEY_CLANGTOKEN = 'clang_token';
+    const KEY_CLANGAPPID = 'clang_app_id';
     const KEY_ENDPOINTS  = 'end_points';
 
     /**
@@ -38,6 +39,22 @@ class SetupSettings extends \Magento\Framework\Model\AbstractModel implements \C
     public function setClangToken($clang_token)
     {
         return $this->setData(self::KEY_CLANGTOKEN, $clang_token);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClangAppId()
+    {
+        return $this->_getData(self::KEY_CLANGAPPID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setClangAppId($clang_app_id)
+    {
+        return $this->setData(self::KEY_CLANGAPPID, $clang_app_id);
     }
 
     /**

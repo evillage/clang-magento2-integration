@@ -123,6 +123,13 @@ class ManagementApi
                 $storeId
             );
 
+            $this->configWriter->save(
+                'clang/clang/clang_app_id',
+                $storeSettings->getClangAppId(),
+                ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
+
             foreach ($storeSettings->getEndPoints() as $endpoint) {
                 $this->configWriter->save(
                     'clang/clang/endpoint/'.$endpoint->getType(),
@@ -169,9 +176,11 @@ class ManagementApi
             }
 
             $token = $this->configReader->getValue('clang/clang/clang_token', ScopeInterface::SCOPE_STORES, $storeId);
+            $appId = $this->configReader->getValue('clang/clang/clang_app_id', ScopeInterface::SCOPE_STORES, $storeId);
 
             $setup = $this->setupSettingsFactory->create();
             $setup->setClangToken($token);
+            $setup->setClangAppId($appId);
             $setup->setEndPoints($endpoints);
             $setup->setStoreId($storeId);
 

@@ -21,6 +21,13 @@ interface SetupSettingsInterface
     public function getClangToken();
 
     /**
+     * Clang App Id
+     * @return string
+     */
+
+    public function getClangAppId();
+
+    /**
      * Get the api endpoints
      * @return Clang\Clang\Api\EndPointInterface[]
      */
@@ -42,6 +49,14 @@ interface SetupSettingsInterface
      */
 
     public function setClangToken($clang_token);
+
+    /**
+     * Set the Clang App Id
+     * @param string $clang_app_id
+     * @return mixed
+     */
+
+    public function setClangAppId($clang_app_id);
 
     /**
      * Set the api endpoints

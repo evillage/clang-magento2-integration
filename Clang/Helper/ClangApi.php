@@ -130,6 +130,12 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                 $storeId
             );
 
+            $appId       = $this->configReader->getValue(
+                'clang/clang/clang_app_id',
+                ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
+
             $endpoint    = $this->configReader->getValue(
                 'clang/clang/endpoint/'.$endpointName,
                 ScopeInterface::SCOPE_STORES,
@@ -162,6 +168,8 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                 $headers['Content-Type'] = 'application/json';
                 $headers['Content-Length'] = strlen($data_string);
             }
+
+            $headers['X-Clang-App-Id'] = $appId;
 
             if ($headers) {
                 $h = [];

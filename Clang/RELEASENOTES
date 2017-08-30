@@ -9,7 +9,7 @@ Release notes
 *Description:*
 
 * ACL Role added, for API
-
+* Clang App Identification added in Calls to Clang
 
 1.0.1
 -----
