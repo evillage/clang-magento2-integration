@@ -1,10 +1,20 @@
 Release notes
 =============
 
+1.0.2
+-----
+
+*Compatible with CE:* 2.0 2.1
+*Stability:* Stable Build
+*Description:*
+
+* ACL Role added, for API
+
+
 1.0.1
 -----
 
-*Compatible with CE:* 2.0 2.1 2.2
+*Compatible with CE:* 2.0 2.1
 *Stability:* Stable Build
 *Description:*
 

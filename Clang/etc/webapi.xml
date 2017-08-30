@@ -4,55 +4,55 @@
     <route url="/V1/clang-clang/info" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="getInfo"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/test_connection" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="testConnection"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/setup" method="POST">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="setup"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/check_setup" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="checkSetup"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/get_log" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="getLog"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/product_url_sku" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="getProductUrlBySku"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/disable_mails" method="POST">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="disableMails"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/check_mails" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="checkMails"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
     <route url="/V1/clang-clang/unsubscribe_url" method="GET">
         <service class="Clang\Clang\Api\ManagementApiInterface" method="getUnsubscribeUrl"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Clang_Clang::top"/>
         </resources>
     </route>
 </routes>
