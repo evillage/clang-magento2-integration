@@ -90,6 +90,10 @@ xsi:noNamespaceSchemaLocation="template_endpoints.xsd">
         <endpoint>newsletter-unsubscribe</endpoint>
     </template>
     <template>
+        <name>newsletter_subscription_email_template</name>
+        <endpoint>newsletter-subscribe</endpoint>
+    </template>
+    <template>
         <name>sendfriend_email_template</name>
         <endpoint>sendfriend</endpoint>
     </template>
