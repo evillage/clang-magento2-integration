@@ -93,9 +93,8 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                 $data,
                 ['X-Reference'=>$log->getId(), 'X-Identifier'=>'Magento Extension '.$this->getExtensionVersion()]
             );
-
             $log->setData('response_code', $response_code);
-            $log->setData('response', $response);
+            $log->setData('response', json_encode($response));
             $log->save();
         } catch (\Exception $e) {
             $log->setData('response_code', $e->getCode());
