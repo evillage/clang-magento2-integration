@@ -2,8 +2,6 @@
 
 namespace Clang\Clang\Helper;
 
-use Magento\Framework\App\TemplateTypesInterface;
-use Magento\Framework\Mail\Message;
 use Magento\Framework\Mail\MessageInterface;
 use Magento\Framework\Mail\TransportInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
@@ -26,8 +24,8 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         SenderResolverInterface $senderResolver,
         ObjectManagerInterface $objectManager,
         TransportInterfaceFactory $mailTransportFactory,
-        \Clang\Clang\Helper\ClangCommunication $clangCommunication,
-        \Clang\Clang\Helper\Data $clangDataHelper,
+        ClangCommunication $clangCommunication,
+        Data $clangDataHelper,
         TemplateEndpointConfig $templateEndpoints,
         ScopeConfigInterface $configReader
     ) {
@@ -60,11 +58,13 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         // Collect all data from the templateoptions and template vars. Convert it to scalars
         // and arrays to be able to json_encode the data and send it to Clang.
         $data = [];
+        $storeId = null;
+
         foreach ($this->templateOptions as $key => $value) {
             unset($objects);
             $objects = [];
             $data[$key] = $this->clangDataHelper->toArray($value, $objects);
-            if ($key == 'store' && is_scalar($value)) {
+            if ($key === 'store' && is_scalar($value)) {
                 $storeId = $value;
             }
         }
@@ -72,13 +72,26 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
             unset($objects);
             $objects = [];
             $data[$key] = $this->clangDataHelper->toArray($value, $objects);
-            if ($key == 'store' && is_scalar($value)) {
+            if ($key === 'store' && is_scalar($value)) {
                 $storeId = $value;
             }
         }
 
         if ($storeId) {
             $data['store_id'] = $storeId;
+        }
+
+        // Specific solution to be compatible with the Buckaroo Magento 2 extension
+        // It solves the issue that there are no order items in $data
+        if (!isset($data['order']['items']) && in_array($templateIdentifier, ['sales_email_order_guest_template', 'sales_email_order_template'])) {
+            /** @var \Magento\Sales\Model\Order $order */
+            $order = $this->templateVars['order'];
+            $items = $order->getAllItems();
+            if ($items ) {
+                unset($objects);
+                $objects = [];
+                $data['order']['items'] = $this->clangDataHelper->toArray($items, $objects);
+            }
         }
 
         // Some template names are mapped and grouped to shorter endpoint names. We get the
@@ -109,8 +122,8 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
 
         if ($disableMail) {
             return new DummyTransport();
-        } else {
-            return parent::getTransport();
         }
+
+        return parent::getTransport();
     }
 }
