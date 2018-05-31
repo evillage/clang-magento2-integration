@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.0.4
+-----
+
+*Compatible with CE:* 2.0 2.1
+*Stability:* Stable Build
+*Description:*
+
+* Fixes an incompatibility with the Buckaroo Magento Extenion
+
 1.0.3
 -----
 

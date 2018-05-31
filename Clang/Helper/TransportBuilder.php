@@ -86,8 +86,7 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         if (!isset($data['order']['items']) && in_array($templateIdentifier, ['sales_email_order_guest_template', 'sales_email_order_template'])) {
             /** @var \Magento\Sales\Model\Order $order */
             $order = $this->templateVars['order'];
-            $items = $order->getAllItems();
-            if ($items ) {
+            if ($items = $order->getAllItems()) {
                 unset($objects);
                 $objects = [];
                 $data['order']['items'] = $this->clangDataHelper->toArray($items, $objects);
