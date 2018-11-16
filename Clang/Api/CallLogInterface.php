@@ -1,5 +1,5 @@
 <?php
-namespace Clang\Clang\Model;
+namespace Clang\Clang\Api;
 
 interface CallLogInterface
 {

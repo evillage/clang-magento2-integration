@@ -88,7 +88,7 @@ interface ManagementApiInterface
      * @param string $filter
      * @param integer $page
      * @param integer $pageSize
-     * @return Clang\Clang\Model\CallLogInterface[]
+     * @return Clang\Clang\Api\CallLogInterface[]
      */
     public function getLog($filter, $page = false, $pageSize = false);
 }

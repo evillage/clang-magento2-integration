@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.0.5
+-----
+
+*Compatible with CE:* 2.0 2.1
+*Stability:* Stable Build
+*Description:*
+
+* Fixes for Swagger API reflection
+
 1.0.4
 -----
 
@@ -8,7 +17,7 @@ Release notes
 *Stability:* Stable Build
 *Description:*
 
-* Fixes an incompatibility with the Buckaroo Magento Extenion
+* Fixes an incompatibility with the Buckaroo Magento Extension
 
 1.0.3
 -----

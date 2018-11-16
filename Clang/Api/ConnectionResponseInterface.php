@@ -37,16 +37,14 @@ interface ConnectionResponseInterface
 
     /**
      * Connection responses
-     * @return array
+     * @return mixed[]
      */
-
     public function getConnectionResponse();
 
     /**
      * Set the Connection responses
      * @param array $response
-     * @return array
+     * @return mixed[]
      */
-
     public function setConnectionResponse($response);
 }

@@ -45,7 +45,7 @@ class ConnectionResponse extends AbstractModel implements ConnectionResponseInte
 
     /**
      * Connection responses
-     * @return array
+     * @return mixed[]
      */
 
     public function getConnectionResponse()
@@ -56,7 +56,7 @@ class ConnectionResponse extends AbstractModel implements ConnectionResponseInte
     /**
      * Set the Connection responses
      * @param array $response
-     * @return array
+     * @return mixed[]
      */
 
     public function setConnectionResponse($response)
