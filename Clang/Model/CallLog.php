@@ -2,6 +2,7 @@
 namespace Clang\Clang\Model;
 
 use \Magento\Framework\DataObject\IdentityInterface;
+use \Clang\Clang\Api\CallLogInterface;
 
 class CallLog extends \Magento\Framework\Model\AbstractModel implements CallLogInterface, IdentityInterface
 {
