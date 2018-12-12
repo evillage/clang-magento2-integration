@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.0.6
+-----
+
+*Compatible with CE:* 2.0 2.1 2.2 2.3
+*Stability:* Stable Build
+*Description:*
+
+* This update contains fixes for compatibility with Magento CE 2.2 and 2.3
+
 1.0.5
 -----
 
