@@ -11,6 +11,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": "^7.0.0",
         "magento/framework": ">=100.0.17"
     },
     "autoload": {
