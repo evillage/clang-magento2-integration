@@ -11,8 +11,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.0.0",
-        "magento/framework": ">=100.0.17"
+        "magento/magento-composer-installer": "^0.1.13"
     },
     "autoload": {
         "psr-4": {
