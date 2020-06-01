@@ -1,6 +1,26 @@
 Release notes
 =============
 
+1.0.8
+-----
+
+*Compatible with CE:* 2.2 2.3
+*Stability:* Stable Build
+*Description:*
+
+* Updated for better version compatibility in the future
+
+1.0.7
+-----
+
+*Compatible with CE:* 2.2 2.3
+*Stability:* Stable Build
+*Description:*
+
+* Fixes an incompatibility with the default Magento REST API
+* Support for PHP 7.0.0 or higher
+* Removed support for Magento version 2.0 and 2.1
+
 1.0.6
 -----
 
