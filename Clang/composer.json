@@ -1,7 +1,7 @@
 {
     "name": "clang/module-clang",
     "description": "A module to integrate Magento with Clang e-mailmarketing software",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +11,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.0.0",
         "magento/framework": ">=100.0.17"
     },
     "autoload": {

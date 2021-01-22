@@ -146,8 +146,7 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
                     'clang/clang/endpoint/generic',
                     ScopeInterface::SCOPE_STORES,
                     $storeId
-                );
-                $endpoint .= str_replace('_', '-', $endpointName);
+                ) . $endpointName;
             }
 
             $url         = $endpoint.($path?'/'.$path:'').'?token='.$token;

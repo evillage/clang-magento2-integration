@@ -1,6 +1,17 @@
 Release notes
 =============
 
+1.0.9
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Add possibility to turn off Magento mails with underscores in names
+* Added support for Magento version 2.4
+* Backwards compatibility: email templates that contain an underscore _ character will have a new endpoint in Canopy Deploy. Contact Canopy Deploy support to have your endpoints updated automatically when updating from an older version.
+
 1.0.8
 -----
 
