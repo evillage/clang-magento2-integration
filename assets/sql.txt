@@ -1,0 +1,5 @@
+REPLACE INTO `core_config_data`
+(`config_id`, `scope`, `scope_id`, `path`, `value`, `updated_at`)
+VALUES
+
+(null, 'default', 0, 'clang/clang/product_attribute_mapping_mode', '2', now());

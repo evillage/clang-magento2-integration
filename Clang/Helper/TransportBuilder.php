@@ -2,6 +2,9 @@
 
 namespace Clang\Clang\Helper;
 
+use Clang\Clang\Config;
+use Clang\Clang\Model\Config\AttributeMappingConfigList;
+use Clang\Clang\Model\Product\ProductAttributeMapper;
 use Magento\Framework\Mail\MessageInterface;
 use Magento\Framework\Mail\TransportInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
@@ -18,6 +21,29 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
     protected $configReader;
     protected $templateEndpoints;
 
+    /**
+     * @var ProductAttributeMapper
+     */
+    private $productAttributeMapper;
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * TransportBuilder constructor.
+     * @param FactoryInterface $templateFactory
+     * @param MessageInterface $message
+     * @param SenderResolverInterface $senderResolver
+     * @param ObjectManagerInterface $objectManager
+     * @param TransportInterfaceFactory $mailTransportFactory
+     * @param ClangCommunication $clangCommunication
+     * @param Data $clangDataHelper
+     * @param TemplateEndpointConfig $templateEndpoints
+     * @param ScopeConfigInterface $configReader
+     * @param ProductAttributeMapper $productAttributeMapper
+     * @param Config $config
+     */
     public function __construct(
         FactoryInterface $templateFactory,
         MessageInterface $message,
@@ -27,7 +53,9 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         ClangCommunication $clangCommunication,
         Data $clangDataHelper,
         TemplateEndpointConfig $templateEndpoints,
-        ScopeConfigInterface $configReader
+        ScopeConfigInterface $configReader,
+        ProductAttributeMapper $productAttributeMapper,
+        Config $config
     ) {
         parent::__construct($templateFactory, $message, $senderResolver, $objectManager, $mailTransportFactory);
 
@@ -35,6 +63,8 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         $this->clangCommunication = $clangCommunication;
         $this->clangDataHelper    = $clangDataHelper;
         $this->templateEndpoints  = $templateEndpoints;
+        $this->productAttributeMapper = $productAttributeMapper;
+        $this->config = $config;
     }
 
     /**
@@ -103,6 +133,12 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         }
 
         $endpoint = preg_replace('/\s+/', '-', strtolower($endpoint));
+
+        if (isset($data['order']) &&
+            $this->config->getAttributeMappingMode($data['store']['code']) ===
+            AttributeMappingConfigList::MERGE_SIMPLE_WITH_CONFIGURABLE) {
+            $data['order']['items'] = $this->productAttributeMapper->setProductsToMap($data['order']);
+        }
 
         // Send the data to Clang
         $this->clangCommunication->postData($storeId, $endpoint, $data);
