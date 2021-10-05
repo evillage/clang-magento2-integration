@@ -1,12 +1,12 @@
 {
     "name": "clang/module-clang",
-    "description": "A module to integrate Magento with Clang e-mailmarketing software",
-    "version": "1.0.9",
+    "description": "A module to integrate Magento with CanopyDeploy e-mailmarketing software",
+    "version": "1.0.10",
     "license": "MIT",
     "authors": [
         {
-            "name": "e-Village BV",
-            "email": "info@e-village.nl"
+            "name": "Team ITG",
+            "email": "info@teamitg.com"
         }
     ],
     "minimum-stability": "dev",
