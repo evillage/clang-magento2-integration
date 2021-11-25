@@ -11,6 +11,15 @@ Release notes
 The execution of the following SQL is required in order to use the feature in this version:
 REPLACE INTO 'core_config_data' ('config_id', 'scope', 'scope_id', 'path', 'value') VALUES (null, 'default', 0, 'clang/clang/product_attribute_mapping_mode', '2');
 
+1.0.11
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Merge simple with configurable when sending the data to Canopy Deploy
+
 1.0.9
 -----
 
