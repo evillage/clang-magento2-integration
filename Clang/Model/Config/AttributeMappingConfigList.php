@@ -7,7 +7,8 @@ use Magento\Framework\Data\OptionSourceInterface;
 class AttributeMappingConfigList implements OptionSourceInterface
 {
     const DEFAULT_VALUE = '1';
-    const DO_NOT_MERGE_SIMPLE_WITH_CONFIGURABLE = '2';
+    const MERGE_SIMPLE_WITH_CONFIGURABLE = '2';
+    const DO_NOT_MERGE_SIMPLE_WITH_CONFIGURABLE = '3';
 
     /**
      * @return array[]
@@ -16,6 +17,7 @@ class AttributeMappingConfigList implements OptionSourceInterface
     {
         return [
             ['value' => self::DEFAULT_VALUE, 'label' => __('Default')],
+            ['value' => self::MERGE_SIMPLE_WITH_CONFIGURABLE, 'label' => __('Default')],
             ['value' => self::DO_NOT_MERGE_SIMPLE_WITH_CONFIGURABLE, 'label' => __('Do not merge simple with configurable')]
         ];
     }
