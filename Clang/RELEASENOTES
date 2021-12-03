@@ -1,5 +1,16 @@
 Release notes
 =============
+1.0.11
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* The configurable product's attributes by default are added to the simple product, including images.
+To get the pre-1.0.10 behaviour, the execution of the following SQL is required:
+REPLACE INTO 'core_config_data' ('config_id', 'scope', 'scope_id', 'path', 'value') VALUES (null, 'default', 0, 'clang/clang/product_attribute_mapping_mode', '3');
+
 1.0.10
 -----
 
