@@ -15,10 +15,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Clang\\Clang\\": ""
+            "Clang\\Clang\\": "Clang/"
         },
         "files": [
-            "registration.php"
+            "Clang/registration.php"
         ]
     },
     "type": "magento2-module"
