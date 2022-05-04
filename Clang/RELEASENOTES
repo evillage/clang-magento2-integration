@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.0.13
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Fixed an issue with a settings key
+
 1.0.12
 -----
 

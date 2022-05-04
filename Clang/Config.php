@@ -7,7 +7,7 @@ use Magento\Store\Model\ScopeInterface;
 
 class Config
 {
-    const ATTRIBUTE_MAPPING_MODE = 'clang/general/product_attribute_mapping_mode';
+    const ATTRIBUTE_MAPPING_MODE = 'clang/clang/product_attribute_mapping_mode';
 
     /**
      * @var ScopeConfigInterface
