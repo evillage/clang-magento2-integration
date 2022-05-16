@@ -1,5 +1,13 @@
 Release notes
 =============
+1.0.14
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* removed obsolete InstallSchema.php and replaced it with db_schema.xml
 
 1.0.13
 -----
