@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+  <table name="clang_clang_calllog" resource="default" engine="innodb" comment="clang_clang_calllog">
+    <column xsi:type="int" name="clang_clang_calllog_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
+    <column xsi:type="varchar" name="endpoint" nullable="false" length="255" comment="Demo Title"/>
+    <column xsi:type="longtext" name="data" nullable="false" comment="Data"/>
+    <column xsi:type="varchar" name="response_code" nullable="false" length="255" comment="Response Code"/>
+    <column xsi:type="varchar" name="store_id" nullable="false" length="255" comment="Response Code"/>
+    <column xsi:type="longtext" name="response" nullable="false" comment="Response"/>
+    <column xsi:type="timestamp" name="call_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Call Time"/>
+    <column xsi:type="timestamp" name="creation_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Creation Time"/>
+    <column xsi:type="timestamp" name="update_time" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Modification Time"/>
+    <column xsi:type="smallint" name="is_active" padding="6" unsigned="false" nullable="false" identity="false" default="1" comment="Is Active"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="clang_clang_calllog_id"/>
+    </constraint>
+    <index referenceId="CLANG_CLANG_CALLLOG_CREATION_TIME" indexType="btree">
+      <column name="creation_time"/>
+    </index>
+  </table>
+</schema>
