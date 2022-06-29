@@ -1,5 +1,14 @@
 Release notes
 =============
+1.0.15
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* add check to avoid error messages in latest Magento versions
+
 1.0.14
 -----
 

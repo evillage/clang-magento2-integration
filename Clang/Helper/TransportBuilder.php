@@ -134,9 +134,7 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
 
         $endpoint = preg_replace('/\s+/', '-', strtolower($endpoint));
 
-        if (isset($data['order']) &&
-            $this->config->getAttributeMappingMode($data['store']['code']) !==
-            AttributeMappingConfigList::DO_NOT_MERGE_SIMPLE_WITH_CONFIGURABLE) {
+        if (isset($data['order']) && (!isset($data['store']['code']) || $this->config->getAttributeMappingMode($data['store']['code']) !== AttributeMappingConfigList::DO_NOT_MERGE_SIMPLE_WITH_CONFIGURABLE)) {
             $data['order']['items'] = $this->productAttributeMapper->setProductsToMap($data['order']);
         }
 
