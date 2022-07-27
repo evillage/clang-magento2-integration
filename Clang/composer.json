@@ -1,7 +1,7 @@
 {
     "name": "clang/module-clang",
     "description": "A module to integrate Magento with CanopyDeploy e-mailmarketing software",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "license": "MIT",
     "authors": [
         {

@@ -1,5 +1,14 @@
 Release notes
 =============
+1.0.16
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Add integration resource to the list of available APIs for token access
+
 1.0.15
 -----
 
