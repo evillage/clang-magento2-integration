@@ -59,11 +59,6 @@
         <service class="Magento\Catalog\Api\ProductRepositoryInterface" method="getById"/>
         <resources>
             <resource ref="Magento_Catalog::products" />
-    </resources>
-    <route url="/V1/products/id/:productId" method="GET">
-        <service class="Magento\Catalog\Api\ProductRepositoryInterface" method="getById"/>
-        <resources>
-            <resource ref="Magento_Catalog::products" />
         </resources>
     </route>
 </routes>
