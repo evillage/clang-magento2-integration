@@ -28,6 +28,9 @@ class CustomerUpdate implements ObserverInterface
 
         $customer = $observer->getEvent()->getCustomerDataObject();
         if ($customer instanceof \Magento\Customer\Model\Data\Customer) {
+            if (!$observer->getOrigCustomerDataObject()) {
+                return $this;
+            }
             $storeId = $customer->getStoreId();
             $customerId = $customer->getId();
         } else {
@@ -47,7 +50,7 @@ class CustomerUpdate implements ObserverInterface
                 $objects = [];
                 $data = $this->clangDataHelper->toArray($customer->getDataModel(), $objects);
 
-                $this->clangCommunication->postData($storeId, 'update-customer', ['customer'=>$data]);
+                $this->clangCommunication->postData($storeId, 'update-customer', ['customer' => $data]);
             }
         }
         return $this;
