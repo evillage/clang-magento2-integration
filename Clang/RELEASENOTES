@@ -1,5 +1,14 @@
 Release notes
 =============
+1.0.18
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Fixed an issue where multiple update calls would be made on user registration
+
 1.0.17
 -----
 
