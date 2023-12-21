@@ -1,5 +1,14 @@
 Release notes
 =============
+1.0.19
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Fixed an issue where authorizing could be blocked by stores with unreachable endpoints
+
 1.0.18
 -----
 

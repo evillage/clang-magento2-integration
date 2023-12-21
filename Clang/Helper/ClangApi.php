@@ -160,6 +160,7 @@ class ClangApi extends \Magento\Framework\App\Helper\AbstractHelper
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
 
             if ($data) {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
