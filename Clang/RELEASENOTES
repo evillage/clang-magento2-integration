@@ -1,5 +1,14 @@
 Release notes
 =============
+1.0.19
+-----
+
+*Compatible with CE:* 2.2 2.3 2.4
+*Stability:* Stable Build
+*Description:*
+
+* Added an optional `storeIds` query parameter to the `/V1/clang-clang/check_mails` route
+
 1.0.18
 -----
 
