@@ -66,10 +66,11 @@ interface ManagementApiInterface
      * Check enabled / disabled mails. Used by Clang to verify which messages are
      * send by Magento and which are not, to make sure Clang doesn't send the same
      * messages.
-     *
+     * 
+     * @param string|null $storeIds
      * @return Clang\Clang\Api\MailSettingInterface[]
      */
-    public function checkMails();
+    public function checkMails($storeIds = null);
 
     /**
      * Check the setup. Retrieves the setup settings. Used by Clang to verify the

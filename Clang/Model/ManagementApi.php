@@ -271,7 +271,7 @@ class ManagementApi
     /**
      * {@inheritdoc}
      */
-    public function checkMails()
+    public function checkMails($storeIds = null)
     {
         // Check enabled / disabled mails. Used by Clang to verify which messages are
         // send by Magento and which are not, to make sure Clang doesn't send the same
@@ -279,7 +279,16 @@ class ManagementApi
         $settings = [];
         $mailNames = array_filter(explode(',', $this->configReader->getValue('clang/clang/disable_mailnames')));
 
-        foreach ($this->storeManager->getStores() as $store) {
+        $stores = [];
+        if (is_null($storeIds)) {
+            $stores = $this->storeManager->getStores();
+        } else {
+            foreach (json_decode($storeIds) as $storeId) {
+                $stores[] = $this->storeManager->getStore($storeId);
+            }
+        }
+
+        foreach ($stores as $store) {
             $storeId = $store->getId();
 
             foreach ($mailNames as $type) {
